@@ -4,7 +4,11 @@ import Aura from '@primevue/themes/aura';
 export default defineNuxtConfig({
   compatibilityDate: '2024-11-01',
   devtools: { enabled: true },
-  modules: ['@primevue/nuxt-module', '@nuxtjs/supabase'],
+  modules: [
+    '@primevue/nuxt-module',
+    '@nuxtjs/supabase',
+    '@pinia/nuxt'
+  ],
   supabase: {
     url: process.env.SUPABASE_URL,
     key: process.env.SUPABASE_KEY,

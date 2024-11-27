@@ -10,7 +10,7 @@
                 <Button
                   v-if="!user"
                   outlined
-                  @click="toLogin"
+                  @click="fireAuth"
                   :loading="loading"
                 >Login</Button>
   
@@ -98,26 +98,8 @@
     })
   
     if (!error && data) {
-      const { data: userData } = await supabase
-        .from('users')
-        .select()
-        .eq('id', data.user.id)
-      const foundUser = userData ? userData[0] : null
-      await store.fetchUser(foundUser)
-      renderKey.value++
-  
-      if (foundUser && foundUser.type !== 'admin') {
-        await navigateTo(
-          foundUser.associated_merchant_id ?
-          `/merchants/${foundUser.associated_merchant_id}` :
-          `/vendors/${foundUser.associated_vendor_id}`   
-        )
-      } else if (foundUser && foundUser.type === 'admin') {
-        await navigateTo('/admin')
-      }
-    } else if (error) {
-      errDialog.value = true
-      errMsg.value = error.message
+      console.log('data: ', data)
+      await navigateTo(`/users/${data.user.id}`)
     }
     loading.value = false
   }
