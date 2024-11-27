@@ -14,7 +14,9 @@
     "@primevue/nuxt-module": "^4.2.3",
     "@primevue/themes": "^4.2.3",
     "nuxt": "^3.14.1592",
+    "primeicons": "^7.0.0",
     "primevue": "^4.2.3",
+    "uuid": "^11.0.3",
     "vue": "latest",
     "vue-router": "latest"
   }

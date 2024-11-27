@@ -10,7 +10,7 @@
                 <Button
                   v-if="!user"
                   outlined
-                  :disabled="email == '' || password == ''"
+                  @click="toLogin"
                   :loading="loading"
                 >Login</Button>
   
@@ -18,17 +18,17 @@
                   v-if="!user"
                   outlined
                   severity="secondary"
-                  @click="toSalePage"
-                >Post Your Sale</Button>
+                  @click="register"
+                >Sign Up</Button>
   
-                <!-- <Button v-if="user" outlined severity="contrast" type="button" icon="pi pi-user" @click="toggleAccountMenu" aria-haspopup="true" aria-controls="account_menu" />
+                <Button v-if="user" outlined severity="contrast" type="button" icon="pi pi-user" @click="toggleAccountMenu" aria-haspopup="true" aria-controls="account_menu" />
                 <Menu
                   ref="menu"
                   id="account_menu"
                   :model="menuItems"
                   :popup="true"
                   :rerender="renderKey"
-                /> -->
+                />
                 <!-- <Avatar image="https://primefaces.org/cdn/primevue/images/avatar/amyelsner.png" shape="circle" /> -->
             </div>
         </template>
@@ -52,40 +52,40 @@
   const email     = ref('')
   const password  = ref('')
   const menu      = ref();
-//   const menuItems = ref([
-//       {
-//           items: [
-//               {
-//                   label: 'Profile',
-//                   icon: 'pi pi-home',
-//                   command: () => {
-//                     router.push(`/${storeUser.type}s/${storeUser.associated_merchant_id ? storeUser.associated_merchant_id : storeUser.associated_vendor_id}`)
-//                   }
-//               },
-//               {
-//                   label: 'Messages',
-//                   icon: 'pi pi-inbox',
-//                   command: () => {
-//                     router.push(`/messages/${storeUser.associated_merchant_id ? storeUser.associated_merchant_id : storeUser.associated_vendor_id}`)
-//                   }
-//               },
-//               {
-//                   label: 'Settings',
-//                   icon: 'pi pi-cog',
-//                   command: () => {
-//                     router.push(`/settings/${storeUser.associated_merchant_id ? storeUser.associated_merchant_id : storeUser.associated_vendor_id}`)
-//                   }
-//               },
-//               {
-//                   label: `Sign out`,
-//                   icon: 'pi pi-sign-out',
-//                   command: async () => {
-//                     await signOut()
-//                   }
-//               }
-//           ]
-//       }
-//   ]);
+  const menuItems = ref([
+      {
+          items: [
+              // {
+              //     label: 'Profile',
+              //     icon: 'pi pi-home',
+              //     command: () => {
+              //       router.push(`/${storeUser.type}s/${storeUser.associated_merchant_id ? storeUser.associated_merchant_id : storeUser.associated_vendor_id}`)
+              //     }
+              // },
+              // {
+              //     label: 'Messages',
+              //     icon: 'pi pi-inbox',
+              //     command: () => {
+              //       router.push(`/messages/${storeUser.associated_merchant_id ? storeUser.associated_merchant_id : storeUser.associated_vendor_id}`)
+              //     }
+              // },
+              // {
+              //     label: 'Settings',
+              //     icon: 'pi pi-cog',
+              //     command: () => {
+              //       router.push(`/settings/${storeUser.associated_merchant_id ? storeUser.associated_merchant_id : storeUser.associated_vendor_id}`)
+              //     }
+              // },
+              {
+                  label: `Sign out`,
+                  icon: 'pi pi-sign-out',
+                  command: async () => {
+                    await signOut()
+                  }
+              }
+          ]
+      }
+  ]);
   
   const toggleAccountMenu = (event: any) => {
     menu.value.toggle(event)
@@ -133,6 +133,9 @@
   }
   const toSalePage = async () => {
     await navigateTo('/createSale')
+  }
+  const toLogin = async () => {
+    console.log('logging in!')
   }
   
   </script>
