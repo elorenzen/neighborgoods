@@ -29,15 +29,17 @@
 </template>
 
 <script setup lang="ts">
-const supabase = useSupabaseClient()
-const user = useSupabaseUser()
+const supabase  = useSupabaseClient()
+const user      = useSupabaseUser()
 
-const email = ref()
-const password = ref()
-const loading = ref(false)
+const email     = ref()
+const password  = ref()
+const loading   = ref(false)
 
-const snackbar = ref(false)
+const snackbar  = ref(false)
 const snacktext = ref()
+const errDialog = ref(false)
+const errMsg    = ref()
 
 const addAuthUser = async () => {
     const { data, error } = await supabase.auth.signUp({
@@ -46,25 +48,25 @@ const addAuthUser = async () => {
     })
     if ( data && !error) {
         // if no user auth error, create new user in db.
-        // const userObj = {
-        //     id: data.user?.id,
-        //     created_at: new Date(),
-        //     is_admin: true,
-        //     email: email.value,
-        //     available_for_contact: true,
-        // }
-        // const { error: userErr } = await supabase.from('users').insert(userObj)
-        // if (!userErr) {
+         const userObj = {
+             id: data.user?.id,
+             created_at: new Date(),
+             is_admin: true,
+             email: email.value,
+             available_for_contact: true,
+         }
+        const { error: userErr } = await supabase.from('users').insert(userObj)
+        if (!userErr) {
             snackbar.value = true
             snacktext.value = "New user registered! Sign In."
 
             await navigateTo('/')
-        // }
+        }
     }
-    // else {
-    //     errMsg.value = authErr.message
-    //     errDialog.value = true
-    // }
+    else {
+        errMsg.value = error.message
+        errDialog.value = true
+    }
 }
 </script>
 
