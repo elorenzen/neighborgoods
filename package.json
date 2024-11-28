@@ -19,7 +19,8 @@
     "primevue": "^4.2.3",
     "uuid": "^11.0.3",
     "vue": "latest",
-    "vue-router": "latest"
+    "vue-router": "latest",
+    "vuetify-nuxt-module": "^0.18.3"
   },
   "overrides": {
     "vue": "latest"

@@ -7,7 +7,8 @@ export default defineNuxtConfig({
   modules: [
     '@primevue/nuxt-module',
     '@nuxtjs/supabase',
-    '@pinia/nuxt'
+    '@pinia/nuxt',
+    'vuetify-nuxt-module'
   ],
   supabase: {
     url: process.env.SUPABASE_URL,
