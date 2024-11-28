@@ -1,20 +1,21 @@
 <template>
     <div>
-        USERSHOME
+        <Card style="width: 50rem; overflow: hidden">
+            <template #title>
+                User Data
+            </template>
+            <template #content>
+                <div v-if="user">{{ user }}</div>
+            </template>
+        </Card>
         <Divider />
-        {{ sessionUser }}
     </div>
 </template>
 
 <script setup lang="ts">
-const supabase = useSupabaseClient()
-const { data: { user } } = await supabase.auth.getUser()
-const sessionUser = ref(user)
-
-const seshId = sessionUser.value?.id
-const seshEmail = sessionUser.value?.email
-
-
+const store = useUserStore()
+const user = ref(store.user)
+console.log('store.user: ', store.user)
 </script>
 
 <style scoped>
