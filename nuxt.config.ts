@@ -15,6 +15,12 @@ export default defineNuxtConfig({
     key: process.env.SUPABASE_KEY,
     redirect: false // set to 'true', EVENTUALLY
   },
+  runtimeConfig: {
+    public: {
+      autocomplete: process.env.GEO_KEY,
+      gMapKey: process.env.GMAPS_API_KEY
+    }
+  },
   primevue: {
     options: {
           theme: {

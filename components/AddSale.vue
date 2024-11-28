@@ -24,6 +24,19 @@
                             </FloatLabel>
                         </div>
                         <div class="flex-auto">
+                          <FloatLabel variant="on">
+                            <div class="p-iconfield">
+                              <span class="p-inputicon pi pi-map-marker"></span>
+                              <input
+                                class="p-inputtext p-component p-filled"
+                                id="address"
+                                ref="streetRef"
+                              />
+                            </div>
+                            <label for="phone">Address</label>
+                          </FloatLabel>
+                        </div>
+                        <div class="flex-auto">
                             <FloatLabel variant="on" class="my-4">
                                 <MultiSelect
                                     id="categories"
@@ -91,6 +104,7 @@
 
 <script setup lang="ts">
 import { v4 } from 'uuid'
+import { Loader } from '@googlemaps/js-api-loader'
 const supabase  = useSupabaseClient()
 const userStore = useUserStore()
 
@@ -100,9 +114,11 @@ const date        = ref()
 const start       = ref()
 const end         = ref()
 const notes       = ref()
-const address     = ref(null) // set back later(GMaps stuff not yet implemented)
-const url         = ref(null) // set back later(GMaps stuff not yet implemented)
-const coordinates = ref(null) // set back later(GMaps stuff not yet implemented)
+const streetRef   = ref()
+const addrComps   = ref()
+const address     = ref()
+const url         = ref()
+const coordinates = ref()
 const categories  = ref([])
 const payOptions  = ref([])
 const snackbar    = ref(false)
@@ -127,6 +143,48 @@ const allPaymentOptions = ref([
     'Venmo',
     'Apple Pay'
 ])
+
+
+onMounted(async () => {
+    await sdkInit()
+})
+
+const sdkInit = async () => {
+  //initialize google sdk
+  const config = useRuntimeConfig()
+  const loader = new Loader({
+    apiKey: config.public.gMapKey,
+    version: 'beta',
+    libraries: ['places'],
+  })
+  loader.load().then((google) => {
+    const options = {
+      componentRestrictions: { country: 'us' },
+      fields: ['geometry/location', 'name', 'formatted_address', 'types'],
+      strictBounds: false,
+    }
+    // attaches it to the input field with this ref
+    const autocomplete = new google.maps.places.Autocomplete(
+      streetRef.value,
+      options
+    )
+    autocomplete.addListener('place_changed', () => {
+      const placeResponse = autocomplete.getPlace()
+      const lat = placeResponse.geometry.location.lat()
+      const lng = placeResponse.geometry.location.lng()
+
+      addrComps.value = placeResponse
+        ? placeResponse.address_components
+        : ''
+      coordinates.value = placeResponse ? { lat: lat, lng: lng } : ''
+      address.value = placeResponse
+        ? placeResponse.formatted_address
+        : ''
+      url.value = placeResponse ? placeResponse.url : ''
+    })
+  })
+}
+
 
 const confirmed = async (str: any) => {
     snacktext.value = str
