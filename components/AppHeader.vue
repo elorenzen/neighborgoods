@@ -33,8 +33,7 @@
             </div>
         </template>
     </Menubar>
-<!--   
-    <ErrorDialog v-if="errDialog" :errType="'Sign-in'" :errMsg="errMsg" @errorClose="errDialog = false" /> -->
+    <ErrorDialog v-if="errDialog" :errType="'Sign In'" :errMsg="errMsg" @errorClose="errDialog = false" />
   </template>
   
   <script setup lang="ts">
@@ -97,10 +96,8 @@
       password: password.value,
     })
   
-    if (!error && data) {
-      console.log('data: ', data)
-      await navigateTo(`/users/${data.user.id}`)
-    }
+    if (!error && data) await confirmed(data?.user.id)
+    else await errored(error?.message)
     loading.value = false
   }
   
@@ -113,11 +110,12 @@
     password.value = ''
     await navigateTo('/')
   }
-  const toSalePage = async () => {
-    await navigateTo('/createSale')
+  const confirmed = async (str: any) => {
+      await navigateTo(`/users/${str}`)
   }
-  const toLogin = async () => {
-    console.log('logging in!')
+  const errored = async (str: any) => {
+    errMsg.value = str
+    errDialog.value = true
   }
   
   </script>
