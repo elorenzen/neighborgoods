@@ -14,7 +14,7 @@
                             :maxFileSize="1000000"
                             @upload="addImage($event, imageName)"
                             :auto="true"
-                            chooseLabel="Replace Image"
+                            chooseLabel="Upload Image"
                         />
                     </v-col>
                     <v-col cols="8">
