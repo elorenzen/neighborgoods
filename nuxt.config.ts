@@ -8,7 +8,9 @@ export default defineNuxtConfig({
     '@primevue/nuxt-module',
     '@nuxtjs/supabase',
     '@pinia/nuxt',
-    'vuetify-nuxt-module'
+    'vuetify-nuxt-module',
+    '@nuxt/ui',
+    '@nuxtjs/tailwindcss'
   ],
   supabase: {
     url: process.env.SUPABASE_URL,
@@ -22,11 +24,7 @@ export default defineNuxtConfig({
     }
   },
   primevue: {
-    options: {
-          theme: {
-              preset: Aura
-          }
-      }
+    importTheme: { from: '~/assets/theme.js' },
   },
   css: ['~/assets/main.css', 'primeicons/primeicons.css']
 })
