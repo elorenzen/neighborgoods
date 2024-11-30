@@ -60,12 +60,12 @@
 
         <!-- ADD ITEM -->
         <Dialog v-model:visible="addDialog" modal header="New Menu Item" :style="{ width: '50rem' }">
-            <ItemsAdd :id="user.id" @created="itemCreated" @errored="itemErrored" />
+            <ItemsAdd :id="user.id" @created="itemSuccess" @errored="itemErrored" />
         </Dialog>
 
         <!-- EDIT ITEM -->
         <Dialog v-model:visible="editDialog" modal header="Edit Item" :style="{ width: '50rem' }">
-            <ItemsEdit :item="itemToEdit" />
+            <ItemsEdit :item="itemToEdit" @edited="itemSuccess" @errored="itemErrored" />
         </Dialog>
 
         <DeleteDialog v-if="deleteDialog" :itemType="'Inventory Item'" @deleteConfirm="confirmDelete" @deleteCancel="cancelDelete" />
@@ -164,16 +164,17 @@ const throwErr = (title: any, msg: any) => {
     errMsg.value = msg
     errDialog.value = true
 }
-const itemCreated = async () => {
-    // const { data: itemData } = await supabase.from('items').select()
-    // await itemStore.setAllItems(itemData)
+const itemSuccess = async (str:any) => {
+    const { data: itemData } = await supabase.from('items').select()
+    await itemStore.setAllItems(itemData)
     saleItems.value = await itemStore.getUserItems(user.value.id)
     addDialog.value = false
-    snacktext.value = 'New item created!'
+    editDialog.value = false
+    snacktext.value = `Item ${str}!`
     snackbar.value = true
 }
 const itemErrored = (str:any) => {
-    errType.value = 'Item Creation'
+    errType.value = 'Item Save'
     errMsg.value = str
     errDialog.value = true
 }

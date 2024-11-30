@@ -93,7 +93,7 @@ const addItem = async () => {
         price: price.value,
     }
     const { error } = await supabase.from('items').insert(itemObj)
-    if (!error) emit('created')
+    if (!error) emit('created', 'Created')
     else emit('errored', error.message)
 }
 const addImage = async (e: any) => {
