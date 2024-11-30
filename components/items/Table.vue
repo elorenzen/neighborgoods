@@ -165,9 +165,13 @@ const throwErr = (title: any, msg: any) => {
     errDialog.value = true
 }
 const itemSuccess = async (str:any) => {
-    const { data: itemData } = await supabase.from('items').select()
+    const { data: itemData } = await supabase
+        .from('items')
+        .select()
+        .eq('creator_id', user.value.id)
     await itemStore.setAllItems(itemData)
-    saleItems.value = await itemStore.getUserItems(user.value.id)
+    saleItems.value = itemData
+
     addDialog.value = false
     editDialog.value = false
     snacktext.value = `Item ${str}!`

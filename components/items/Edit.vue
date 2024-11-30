@@ -15,6 +15,9 @@
                         :auto="true"
                         chooseLabel="Upload Image"
                     />
+                    <div v-if="uploading" class="card flex justify-center mt-4">
+                        <ProgressSpinner class="p-progress-spinner-circle" />
+                    </div>
                 </v-col>
                 <v-col cols="8">
                     <Fluid>
@@ -64,8 +67,10 @@ const errDialog = ref(false)
 const errType   = ref()
 const errMsg    = ref()
 const loading   = ref(false)
+const uploading = ref(false)
 
 const submitEdits = async () => {
+    loading.value = true
     const itemObj = {
         name: item.value.name,
         description: item.value.description,
@@ -81,12 +86,13 @@ const submitEdits = async () => {
         .from('items')
         .update(itemObj)
         .eq('id', item.value.id)
-
+    loading.value = false
     if (!error) emit('edited', 'Edited')
     else emit('errored', error.message)
 }
 
 const updateImage = async (e: any, prevFile: any) => {
+    uploading.value = true
     const file = e.files[0]
     const oldFileName = prevFile
 
@@ -119,6 +125,7 @@ const updateImage = async (e: any, prevFile: any) => {
             }
         } else throwErr('Menu Item Image Upload', uploadError.message)
     }
+    uploading.value = false
 }
 const throwErr = (title: any, msg: any) => {
     errType.value = title

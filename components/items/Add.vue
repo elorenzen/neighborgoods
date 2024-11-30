@@ -16,6 +16,9 @@
                             :auto="true"
                             chooseLabel="Upload Image"
                         />
+                        <div v-if="uploading" class="card flex justify-center mt-4">
+                            <ProgressSpinner class="p-progress-spinner-circle" />
+                        </div>
                     </v-col>
                     <v-col cols="8">
                         <Fluid>
@@ -69,13 +72,15 @@ const imageUrl    = ref()
 const imageName   = ref()
 const price       = ref(0)
 const qty         = ref(1)
-const category    = ref()
+const category    = ref('')
 const errType     = ref()
 const errMsg      = ref()
+const uploading   = ref(false)
 const loading     = ref(false)
 const errDialog   = ref(false)
 
 const addItem = async () => {
+    loading.value = true
     const itemObj = {
         id: v4(),
         creator_id: creatorId,
@@ -93,10 +98,12 @@ const addItem = async () => {
         price: price.value,
     }
     const { error } = await supabase.from('items').insert(itemObj)
+    loading.value = false
     if (!error) emit('created', 'Created')
     else emit('errored', error.message)
 }
 const addImage = async (e: any) => {
+    uploading.value = true
     const file = e.files[0]
 
     if (file) {
@@ -112,6 +119,7 @@ const addImage = async (e: any) => {
             if (data) imageUrl.value = data.publicUrl
         } else throwErr('Menu Item Image Upload', uploadError.message)
     }
+    uploading.value = false
 }
 const throwErr = (title: any, msg: any) => {
     errType.value = title
