@@ -10,6 +10,7 @@
 const supabase  = useSupabaseClient()
 const user      = useSupabaseUser()
 const userStore = useUserStore()
+const itemStore = useItemStore()
 
 if (user.value) {
   const { data } = await supabase
@@ -20,4 +21,6 @@ if (user.value) {
   await userStore.fetchUser(foundUser)
 }
 
+const { data: itemData } = await supabase.from('items').select()
+await itemStore.setAllItems(itemData)
 </script>
