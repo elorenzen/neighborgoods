@@ -37,8 +37,18 @@
                                 <div class="flex flex-col md:items-end gap-8">
                                     <span class="text-xl font-semibold">${{ item.price }}</span>
                                     <div class="flex flex-row-reverse md:flex-row gap-2">
-                                        <!-- <Button icon="pi pi-heart" outlined></Button> -->
-                                        <!-- <Button icon="pi pi-shopping-cart" label="Buy Now" :disabled="item.inventoryStatus === 'OUTOFSTOCK'" class="flex-auto md:flex-initial whitespace-nowrap"></Button> -->
+                                        <Button
+                                            @click="promptDeletion(item)"
+                                            icon="pi pi-trash"
+                                            severity="danger"
+                                            outlined>
+                                        </Button>
+                                        <Button
+                                            @click="openEditDialog(item)"
+                                            icon="pi pi-pencil"
+                                            severity="contrast"
+                                            outlined>
+                                        </Button>
                                     </div>
                                 </div>
                             </div>
@@ -55,10 +65,10 @@
 
         <!-- EDIT ITEM -->
         <Dialog v-model:visible="editDialog" modal header="Edit Item" :style="{ width: '50rem' }">
-            ItemsEdit /> goes here
+            <ItemsEdit :item="itemToEdit" />
         </Dialog>
 
-        <DeleteDialog v-if="deleteDialog" :itemType="'menu item'" @deleteConfirm="confirmDelete" @deleteCancel="cancelDelete" />
+        <DeleteDialog v-if="deleteDialog" :itemType="'Inventory Item'" @deleteConfirm="confirmDelete" @deleteCancel="cancelDelete" />
         <ErrorDialog v-if="errDialog" :errType="errType" :errMsg="errMsg" @errorClose="errDialog = false" />
 
         <v-snackbar
@@ -88,11 +98,13 @@ const user         = ref(userStore.user)
 const saleItems    = ref(await itemStore.getUserItems(user.value.id))
 const addDialog    = ref(false)
 const editDialog   = ref(false)
+const itemToEdit   = ref(null)
 const itemToDelete = ref(null)
 const deleteDialog = ref(false)
 const errDialog    = ref(false)
 const errMsg       = ref()
 const errType      = ref()
+const layout       = ref('grid')
 const loading      = ref(false)
 const snackbar     = ref(false)
 const snacktext    = ref('')
@@ -103,7 +115,6 @@ const sortOptions  = ref([
     {label: 'Price High to Low', value: '!price'},
     {label: 'Price Low to High', value: 'price'},
 ]);
-const layout = ref('grid')
 
 const onSortChange = (event:any) => {
     const value = event.value.value;
@@ -120,6 +131,10 @@ const onSortChange = (event:any) => {
         sortKey.value = sortValue;
     }
 };
+const openEditDialog = (item:any) => {
+    itemToEdit.value = item
+    editDialog.value = true
+}
 const promptDeletion = (item:any) => {
     itemToDelete.value = item
     deleteDialog.value = true
