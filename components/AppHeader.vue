@@ -1,7 +1,8 @@
 <template>
-    <Menubar>
+    <Menubar :model="navItems">
         <template #start>
-            <NuxtLink to="/" class="ml-2 text-xl font-bold">NeighborGoods</NuxtLink>
+            <Logo class="w-10 h-10 font-bold" :fontControlled="false" style="color: #008040;" />
+            <NuxtLink to="/" class="ml-2 text-xl font-bold" style="color: #008040;">NeighborGoods</NuxtLink>
         </template>
         <template #end>
             <div class="flex items-center gap-2">
@@ -37,11 +38,12 @@
   </template>
   
   <script setup lang="ts">
+  import Logo from '~/assets/ng-logo-only.svg'
   const supabase  = useSupabaseClient()
   const router    = useRouter()
   const user      = useSupabaseUser()
-//   const store     = useUserStore()
-//   const storeUser = store.user
+  const store     = useUserStore()
+  const storeUser = store.user
   
   const loading   = ref(false)
   const errDialog = ref(false)
@@ -51,6 +53,29 @@
   const email     = ref('')
   const password  = ref('')
   const menu      = ref();
+  const navItems  = ref([
+    {
+      label: 'Home',
+      icon: 'pi pi-home',
+      command: () => {
+        router.push('/')
+      }
+    },
+    {
+      label: 'Map View',
+      icon: 'pi pi-globe',
+      command: () => {
+        router.push('/map')
+      }
+    },
+    {
+      label: 'Inventory',
+      icon: 'pi pi-shopping-cart',
+      command: () => {
+        router.push(`/inventory/${storeUser.id}`)
+      }
+    },
+  ])
   const menuItems = ref([
       {
           items: [

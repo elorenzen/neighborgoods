@@ -10,7 +10,8 @@ export default defineNuxtConfig({
     '@pinia/nuxt',
     'vuetify-nuxt-module',
     '@nuxt/ui',
-    '@nuxtjs/tailwindcss'
+    '@nuxtjs/tailwindcss',
+    'nuxt-svgo'
   ],
   supabase: {
     url: process.env.SUPABASE_URL,
