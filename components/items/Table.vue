@@ -1,62 +1,49 @@
 <template>
     <div class="ma-2">
-        <v-row dense class="flex justify-center pa-2 text-xl"><h3>Items to Sell</h3></v-row>    
-        <DataView :value="saleItems" :layout="layout">
-            <template #header>
-                <div class="flex flex-col md:flex-row justify-between md:items-center flex-1 gap-6 ma-2">
-                    <div>
-                        <Select v-model="sortKey" :options="sortOptions" optionLabel="label" placeholder="Sort By Price" @change="onSortChange($event)" />     
-                    </div>
-                    <div class="flex flex-col md:items-end gap-8">
-                        <Button
-                            outlined
-                            severity="secondary"
-                            icon="pi pi-plus-circle"
-                            @click="addDialog = true"
-                        />
-                    </div>
-                </div>
-            </template>
+        <v-row dense class="flex justify-center pa-2 text-xl"><h3>Items to Sell</h3></v-row>
 
-            <template #grid="slotProps">
-                <div class="grid grid-cols-12 gap-4">
-                    <div v-for="(item, index) in slotProps.items" :key="index" class="col-span-12 sm:col-span-6 md:col-span-4 xl:col-span-6 p-2">
-                        <div class="p-6 border border-surface-200 dark:border-surface-700 bg-surface-0 dark:bg-surface-900 rounded flex flex-col" style="background-color: #008040;">
-                            <div class="md:w-40 relative">
-                                <img class="block xl:block mx-auto rounded w-full" :src="item.image_url" :alt="item.image_name" />
-                            </div>
-                            <div class="flex flex-col md:flex-row justify-between md:items-center flex-1 gap-6">
-                                <div class="flex flex-row md:flex-col justify-between items-start gap-2">
-                                    <div>
-                                        <span class="font-medium text-surface-500 dark:text-surface-400 text-sm">{{ item.category }}</span>
-                                        <div class="text-lg font-medium mt-2">{{ item.name }}</div>
-                                        <div class="text-surface-900 font-medium text-sm">{{ item.description }}</div>
-                                    </div>
-                                    
-                                </div>
-                                <div class="flex flex-col md:items-end gap-8">
-                                    <span class="text-xl font-semibold">${{ item.price }}</span>
-                                    <div class="flex flex-row-reverse md:flex-row gap-2">
-                                        <Button
-                                            @click="promptDeletion(item)"
-                                            icon="pi pi-trash"
-                                            severity="danger"
-                                            outlined>
-                                        </Button>
-                                        <Button
-                                            @click="openEditDialog(item)"
-                                            icon="pi pi-pencil"
-                                            severity="contrast"
-                                            outlined>
-                                        </Button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+        <DataTable :value="saleItems" tableStyle="min-width: 50rem">
+            <template #header>
+                <div class="flex flex-wrap items-center justify-between gap-2">
+                    <span class="text-xl font-bold">Sale Items</span>
+                    <Button
+                        outlined
+                        severity="secondary"
+                        icon="pi pi-plus-circle"
+                        @click="addDialog = true"
+                    />
                 </div>
             </template>
-        </DataView>
+            <Column field="name" header="Name"></Column>
+            <Column header="Image">
+                <template #body="{ data }">
+                    <img :src="data.image_url" :alt="data.image_name" class="w-24 h-24 rounded" />
+                </template>
+            </Column>
+            <Column field="price" header="Price">
+                <template #body="slotProps">
+                    {{ formatCurrency(slotProps.data.price) }}
+                </template>
+            </Column>
+            <Column field="category" header="Category"></Column>
+            <!-- <Column field="rating" header="Reviews">
+                <template #body="slotProps">
+                    <Rating :modelValue="slotProps.data.rating" readonly />
+                </template>
+            </Column>
+            <Column header="Status">
+                <template #body="slotProps">
+                    <Tag :value="slotProps.data.inventoryStatus" :severity="getSeverity(slotProps.data)" />
+                </template>
+            </Column> -->
+            <Column :exportable="false" style="min-width: 12rem">
+                <template #body="slotProps">
+                    <Button icon="pi pi-pencil" outlined rounded class="mr-2" @click="openEditDialog(slotProps.data)" />
+                    <Button icon="pi pi-trash" outlined rounded severity="danger" @click="promptDeletion(slotProps.data)" />
+                </template>
+            </Column>
+            <!-- <template #footer> Total: {{ saleItems ? saleItems.length : 0 }} items. </template> -->
+        </DataTable>
 
         <!-- ADD ITEM -->
         <Dialog v-model:visible="addDialog" modal header="New Menu Item" :style="{ width: '50rem' }">
@@ -182,6 +169,9 @@ const itemErrored = (str:any) => {
     errMsg.value = str
     errDialog.value = true
 }
+const formatCurrency = (value:any) => {
+    return value.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+};
 </script>
 
 <style scoped>
