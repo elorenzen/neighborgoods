@@ -1,70 +1,214 @@
-<script setup lang="ts">
-import { ref } from 'vue'
-
-const isLoaded = ref(false)
-const center = ref()
-const maps = ref()
-
-const query = ref({
-  lat:  -37.7995487,
-  lng: 144.9867841,
-})
-
-const markers = ref([])
-
-let increment = 1
-function addMarker() {
-  // push to markers, we want to add a marker from the center but randomize the position by a bit
-  const _center = center.value || query.value
-  // lat and lng may be a function
-  const _lat = typeof _center.lat === 'function' ? _center.lat() : _center.lat
-  const _lng = typeof _center.lng === 'function' ? _center.lng() : _center.lng
-  const lat = (1000 * _lat + increment) / 1000
-  const lng = (1000 * _lng + increment) / 1000
-  increment += 1
-
-  markers.value.push(`${lat},${lng}`)
-}
-
-function removeMarkers() {
-  markers.value = []
-  increment = 1
-}
-function handleReady({ map }) {
-  center.value = map.value.getCenter()
-  map.value.addListener('center_changed', () => {
-    center.value = map.value.getCenter()
-  })
-  isLoaded.value = true
-}
-</script>
-
 <template>
-<div class="not-prose">
   <div class="flex items-center justify-center p-5">
     <ScriptGoogleMaps
-      ref="maps"
       :center="query"
       :markers="markers"
-      api-key="AIzaSyAOEIQ_xOdLx2dNwnFMzyJoswwvPCTcGzU"
-      class="group"
-      above-the-fold
-      @ready="handleReady"
+      :api-key="key"
+      :mapOptions="mapOptions"
     />
   </div>
-  <div class="text-center">
-    <UAlert v-if="!isLoaded" class="mb-5" size="sm" color="blue" variant="soft" title="Static Image: Hover to load interactive" description="Hovering the map will trigger the Google Maps script to load and init the map." />
-    <UAlert v-if="isLoaded" class="mb-5" size="sm" color="blue" variant="soft" title="Interactive Map">
-      <template #description>
-      Center: {{ center }}
-      </template>
-    </UAlert>
-    <UButton @click="addMarker" type="button" class="">
-      Add Marker
-    </UButton>
-    <UButton v-if="markers.length" @click="removeMarkers" type="button" color="gray" variant="ghost" class="">
-      Remove Markers
-    </UButton>
-  </div>
-</div>
 </template>
+<script setup lang="ts">
+import { ref } from 'vue'
+const config  = useRuntimeConfig()
+const key     = ref(config.public.gMapKey)
+const markers = ref([])
+const query   = ref({
+    lat: 34.0557,
+    lng: -118.2426
+})
+
+const mapOptions = {
+    zoom: 8,
+    styles: [
+        {
+            "featureType": "water",
+            "elementType": "geometry",
+            "stylers": [
+                {
+                    "visibility": "on"
+                },
+                {
+                    "color": "#aee2e0"
+                }
+            ]
+        },
+        {
+            "featureType": "landscape",
+            "elementType": "geometry.fill",
+            "stylers": [
+                {
+                    "color": "#abce83"
+                }
+            ]
+        },
+        {
+            "featureType": "poi",
+            "elementType": "geometry.fill",
+            "stylers": [
+                {
+                    "color": "#769E72"
+                }
+            ]
+        },
+        {
+            "featureType": "poi",
+            "elementType": "labels.text.fill",
+            "stylers": [
+                {
+                    "color": "#7B8758"
+                }
+            ]
+        },
+        {
+            "featureType": "poi",
+            "elementType": "labels.text.stroke",
+            "stylers": [
+                {
+                    "color": "#EBF4A4"
+                }
+            ]
+        },
+        {
+            "featureType": "poi.park",
+            "elementType": "geometry",
+            "stylers": [
+                {
+                    "visibility": "simplified"
+                },
+                {
+                    "color": "#8dab68"
+                }
+            ]
+        },
+        {
+            "featureType": "road",
+            "elementType": "geometry.fill",
+            "stylers": [
+                {
+                    "visibility": "simplified"
+                }
+            ]
+        },
+        {
+            "featureType": "road",
+            "elementType": "labels.text.fill",
+            "stylers": [
+                {
+                    "color": "#5B5B3F"
+                }
+            ]
+        },
+        {
+            "featureType": "road",
+            "elementType": "labels.text.stroke",
+            "stylers": [
+                {
+                    "color": "#ABCE83"
+                }
+            ]
+        },
+        {
+            "featureType": "road",
+            "elementType": "labels.icon",
+            "stylers": [
+                {
+                    "visibility": "off"
+                }
+            ]
+        },
+        {
+            "featureType": "road.local",
+            "elementType": "geometry",
+            "stylers": [
+                {
+                    "color": "#A4C67D"
+                }
+            ]
+        },
+        {
+            "featureType": "road.arterial",
+            "elementType": "geometry",
+            "stylers": [
+                {
+                    "color": "#9BBF72"
+                }
+            ]
+        },
+        {
+            "featureType": "road.highway",
+            "elementType": "geometry",
+            "stylers": [
+                {
+                    "color": "#EBF4A4"
+                }
+            ]
+        },
+        {
+            "featureType": "transit",
+            "stylers": [
+                {
+                    "visibility": "off"
+                }
+            ]
+        },
+        {
+            "featureType": "administrative",
+            "elementType": "geometry.stroke",
+            "stylers": [
+                {
+                    "visibility": "on"
+                },
+                {
+                    "color": "#87ae79"
+                }
+            ]
+        },
+        {
+            "featureType": "administrative",
+            "elementType": "geometry.fill",
+            "stylers": [
+                {
+                    "color": "#7f2200"
+                },
+                {
+                    "visibility": "off"
+                }
+            ]
+        },
+        {
+            "featureType": "administrative",
+            "elementType": "labels.text.stroke",
+            "stylers": [
+                {
+                    "color": "#ffffff"
+                },
+                {
+                    "visibility": "on"
+                },
+                {
+                    "weight": 4.1
+                }
+            ]
+        },
+        {
+            "featureType": "administrative",
+            "elementType": "labels.text.fill",
+            "stylers": [
+                {
+                    "color": "#495421"
+                }
+            ]
+        },
+        {
+            "featureType": "administrative.neighborhood",
+            "elementType": "labels",
+            "stylers": [
+                {
+                    "visibility": "off"
+                }
+            ]
+        }
+    ]
+}
+</script>
