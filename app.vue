@@ -11,6 +11,7 @@ const supabase  = useSupabaseClient()
 const user      = useSupabaseUser()
 const userStore = useUserStore()
 const itemStore = useItemStore()
+const evtStore  = useEventStore()
 
 if (user.value) {
   const { data } = await supabase
@@ -23,4 +24,7 @@ if (user.value) {
 
 const { data: itemData } = await supabase.from('items').select()
 await itemStore.setAllItems(itemData)
+
+const { data: evtData } = await supabase.from('events').select()
+await evtStore.setAllEvents(evtData)
 </script>
