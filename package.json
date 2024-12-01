@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@googlemaps/js-api-loader": "^1.16.8",
+    "@nuxt/scripts": "^0.9.5",
     "@nuxt/ui": "^2.19.2",
     "@nuxtjs/supabase": "^1.4.3",
     "@nuxtjs/tailwindcss": "^6.12.2",

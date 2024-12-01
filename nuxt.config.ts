@@ -4,6 +4,7 @@ import Aura from '@primevue/themes/aura';
 export default defineNuxtConfig({
   compatibilityDate: '2024-11-01',
   devtools: { enabled: true },
+  ssr: false,
   modules: [
     '@primevue/nuxt-module',
     '@nuxtjs/supabase',
@@ -11,7 +12,8 @@ export default defineNuxtConfig({
     'vuetify-nuxt-module',
     '@nuxt/ui',
     '@nuxtjs/tailwindcss',
-    'nuxt-svgo'
+    'nuxt-svgo',
+    '@nuxt/scripts'
   ],
   supabase: {
     url: process.env.SUPABASE_URL,

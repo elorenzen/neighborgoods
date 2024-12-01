@@ -1,6 +1,6 @@
 <template>
     <div>
-map page
+        <MapView />
     </div>
 </template>
 
