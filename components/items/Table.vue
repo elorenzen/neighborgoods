@@ -127,11 +127,16 @@ const promptDeletion = (item:any) => {
     deleteDialog.value = true
 }
 const confirmDelete = async () => {
-    const { error } = await supabase
+    const { error: itemErr } = await supabase
         .from('items')
         .delete()
         .eq('id', itemToDelete.value.id)
-    if (!error) {
+    const { error: imgErr } = await supabase
+        .storage
+        .from('inventory_photos')
+        .remove([itemToDelete.value.image_name])
+    
+    if (!itemErr && !imgErr) {
         snackbar.value = true
         snacktext.value = 'Menu item deleted.'
 
@@ -140,7 +145,7 @@ const confirmDelete = async () => {
 
         deleteDialog.value = false
         itemToDelete.value = null
-    } else throwErr('Item Deletion', error.message)
+    } else throwErr('Item Deletion', itemErr ? itemErr.message : imgErr?.message)
 }
 const cancelDelete = () => {
     deleteDialog.value = false
