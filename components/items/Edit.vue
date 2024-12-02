@@ -28,7 +28,7 @@
                             </FloatLabel>
                         </div>
                         <div class="my-2">
-                            <AutoComplete v-model="item.category" :suggestions="['Clothing & Accessories', 'Furniture', 'Books', 'Toys & Games']" placeholder="Item Category"></AutoComplete>
+                            <AutoComplete v-model="item.category" :suggestions="allCats" placeholder="Item Category"></AutoComplete>
                         </div>
                         <div class="my-2">
                             <FloatLabel variant="on">
@@ -68,6 +68,17 @@ const errType   = ref()
 const errMsg    = ref()
 const loading   = ref(false)
 const uploading = ref(false)
+const allCats   = ref([
+    'Electronics & Media',
+    'Toys, Games, Hobbies',
+    'Sports & Outdoors',
+    'Clothing, Shoes, & Accessories',
+    'Sports & Outdoors',
+    'Collectibles & Art',
+    'Cooking & Appliances',
+    'Office',
+    'Furniture'
+])
 
 const submitEdits = async () => {
     loading.value = true

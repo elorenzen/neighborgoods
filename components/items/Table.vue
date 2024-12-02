@@ -1,8 +1,6 @@
 <template>
     <div class="ma-2">
-        <v-row dense class="flex justify-center pa-2 text-xl"><h3>Items to Sell</h3></v-row>
-
-        <DataTable :value="saleItems" tableStyle="min-width: 50rem">
+        <DataTable :value="saleItems" tableStyle="width: 100%">
             <template #header>
                 <div class="flex flex-wrap items-center justify-between gap-2">
                     <span class="text-xl font-bold">Sale Items</span>
@@ -25,18 +23,9 @@
                     {{ formatCurrency(slotProps.data.price) }}
                 </template>
             </Column>
+            <Column field="description" header="Description" style="max-width: 20rem;"></Column>
             <Column field="category" header="Category"></Column>
-            <!-- <Column field="rating" header="Reviews">
-                <template #body="slotProps">
-                    <Rating :modelValue="slotProps.data.rating" readonly />
-                </template>
-            </Column>
-            <Column header="Status">
-                <template #body="slotProps">
-                    <Tag :value="slotProps.data.inventoryStatus" :severity="getSeverity(slotProps.data)" />
-                </template>
-            </Column> -->
-            <Column :exportable="false" style="min-width: 12rem">
+            <Column :exportable="false" style="min-width:8rem">
                 <template #body="slotProps">
                     <Button icon="pi pi-pencil" outlined rounded class="mr-2" @click="openEditDialog(slotProps.data)" />
                     <Button icon="pi pi-trash" outlined rounded severity="danger" @click="promptDeletion(slotProps.data)" />
@@ -136,16 +125,8 @@ const confirmDelete = async () => {
         .from('inventory_photos')
         .remove([itemToDelete.value.image_name])
     
-    if (!itemErr && !imgErr) {
-        snackbar.value = true
-        snacktext.value = 'Menu item deleted.'
-
-        // const { data: menuData } = await getsaleItems(vendor.value.id)
-        // await menuStore.setsaleItems(menuData)
-
-        deleteDialog.value = false
-        itemToDelete.value = null
-    } else throwErr('Item Deletion', itemErr ? itemErr.message : imgErr?.message)
+    if (!itemErr && !imgErr) await resetFields('Deleted')
+    else throwErr('Item Deletion', itemErr ? itemErr.message : imgErr?.message)
 }
 const cancelDelete = () => {
     deleteDialog.value = false
@@ -157,17 +138,7 @@ const throwErr = (title: any, msg: any) => {
     errDialog.value = true
 }
 const itemSuccess = async (str:any) => {
-    const { data: itemData } = await supabase
-        .from('items')
-        .select()
-        .eq('creator_id', user.value.id)
-    await itemStore.setAllItems(itemData)
-    saleItems.value = itemData
-
-    addDialog.value = false
-    editDialog.value = false
-    snacktext.value = `Item ${str}!`
-    snackbar.value = true
+    await resetFields('Created')
 }
 const itemErrored = (str:any) => {
     errType.value = 'Item Save'
@@ -177,6 +148,17 @@ const itemErrored = (str:any) => {
 const formatCurrency = (value:any) => {
     return value.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
 };
+const resetFields = async (action:any) => {
+    const { data: itemData } = await supabase.from('items').select()
+    await itemStore.setAllItems(itemData)
+    saleItems.value = await itemStore.getUserItems(user.value.id)
+
+    snacktext.value = `Event ${action}!`
+    snackbar.value = true
+
+    addDialog.value = false
+    editDialog.value = false
+}
 </script>
 
 <style scoped>

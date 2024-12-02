@@ -29,7 +29,7 @@
                                 </FloatLabel>
                             </div>
                             <div class="my-2">
-                                <AutoComplete v-model="category" :suggestions="['Clothing & Accessories', 'Furniture', 'Books', 'Toys & Games']" placeholder="Item Category"></AutoComplete>
+                                <AutoComplete v-model="category" :suggestions="allCats" placeholder="Item Category"></AutoComplete>
                             </div>
                             <div class="my-2">
                                 <FloatLabel variant="on">
@@ -78,6 +78,17 @@ const errMsg      = ref()
 const uploading   = ref(false)
 const loading     = ref(false)
 const errDialog   = ref(false)
+const allCats     = ref([
+    'Electronics & Media',
+    'Toys, Games, Hobbies',
+    'Sports & Outdoors',
+    'Clothing, Shoes, & Accessories',
+    'Sports & Outdoors',
+    'Collectibles & Art',
+    'Cooking & Appliances',
+    'Office',
+    'Furniture'
+])
 
 const addItem = async () => {
     loading.value = true
@@ -98,9 +109,9 @@ const addItem = async () => {
         price: price.value,
     }
     const { error } = await supabase.from('items').insert(itemObj)
-    loading.value = false
     if (!error) emit('created', 'Created')
     else emit('errored', error.message)
+    loading.value = false
 }
 const addImage = async (e: any) => {
     uploading.value = true
