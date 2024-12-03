@@ -115,38 +115,45 @@
     }
   ])
   const accountMenu = ref([
-      {
-          items: [
-              {
-                label: 'Home',
-                icon: 'pi pi-home',
-                command: () => {
-                  router.push(`/users/${storeUser.id}`)
-                }
-              },
-              {
-                label: 'Inventory',
-                icon: 'pi pi-shopping-cart',
-                command: () => {
-                  router.push(`/inventory/${storeUser.id}`)
-                }
-              },
-              {
-                label: 'Settings',
-                icon: 'pi pi-cog',
-                command: () => {
-                  router.push(`/settings/${storeUser.id}`)
-                }
-              },
-              {
-                label: `Sign out`,
-                icon: 'pi pi-sign-out',
-                command: async () => {
-                  await signOut()
-                }
-              }
-          ]
-      }
+    {
+      items: [
+          {
+            label: 'Home',
+            icon: 'pi pi-home',
+            command: () => {
+              router.push(`/users/${storeUser.id}`)
+            }
+          },
+          {
+            label: 'Inventory',
+            icon: 'pi pi-receipt',
+            command: () => {
+              router.push(`/inventory/${storeUser.id}`)
+            }
+          },
+          {
+            label: 'Sales',
+            icon: 'pi pi-shopping-cart',
+            command: () => {
+              router.push(`/sales/${storeUser.id}`)
+            }
+          },
+          {
+            label: 'Settings',
+            icon: 'pi pi-cog',
+            command: () => {
+              router.push(`/settings/${storeUser.id}`)
+            }
+          },
+          {
+            label: `Sign out`,
+            icon: 'pi pi-sign-out',
+            command: async () => {
+              await signOut()
+            }
+          }
+      ]
+    }
   ]);
   
   const toggleAccountMenu = (event: any) => {
