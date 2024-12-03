@@ -1,23 +1,27 @@
 <template>
     <div>
-        <Card style="width: 50rem; overflow: hidden">
+        <Card class="ma-2">
             <template #title>
-                User Data
+                Welcome, {{
+                    (user.first_name && user.last_name) ?
+                    `${user.first_name} ${user.last_name}` :
+                    'User'
+                }}!
             </template>
             <template #content>
-                <!--  hello, user.
-                user data here
-                
-                COMPONENT:
-                    show upcoming event/prompt user to create
-
-                COMPONENT:
-                    Item gallery.
-                -->
-                <div v-if="user">{{ user }}</div>
+                {{ user }}
             </template>
         </Card>
-        <Divider />
+        <Card class="ma-2">
+            <template #title>
+                Upcoming Sales Events
+            </template>
+        </Card>
+        <Card class="ma-2">
+            <template #title>
+                Item Gallery
+            </template>
+        </Card>
     </div>
 </template>
 

@@ -3,6 +3,7 @@ export const useItemStore = defineStore('item', {
       allItems: [],
     }),
     getters: {
+      getallItems: (state) => state.allItems,
     },
     actions: {
       async setAllItems(items: []) {
