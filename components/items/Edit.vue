@@ -28,7 +28,12 @@
                             </FloatLabel>
                         </div>
                         <div class="my-2">
-                            <AutoComplete v-model="item.category" :suggestions="allCats" placeholder="Item Category"></AutoComplete>
+                            <AutoComplete
+                                v-model="item.category"
+                                :suggestions="filteredCats"
+                                placeholder="Item Category"
+                                @complete="search($event)"
+                            ></AutoComplete>
                         </div>
                         <div class="my-2">
                             <FloatLabel variant="on">
@@ -59,19 +64,19 @@
 
 <script setup lang="ts">
 import { v4 } from 'uuid'
-const supabase  = useSupabaseClient()
-const emit      = defineEmits(['edited', 'errored'])
-const props     = defineProps(['item'])
-const item      = ref(props.item)
-const errDialog = ref(false)
-const errType   = ref()
-const errMsg    = ref()
-const loading   = ref(false)
-const uploading = ref(false)
-const allCats   = ref([
+const supabase     = useSupabaseClient()
+const emit         = defineEmits(['edited', 'errored'])
+const props        = defineProps(['item'])
+const item         = ref(props.item)
+const errDialog    = ref(false)
+const errType      = ref()
+const errMsg       = ref()
+const loading      = ref(false)
+const uploading    = ref(false)
+const filteredCats = ref()
+const allCats      = ref([
     'Electronics & Media',
     'Toys, Games, Hobbies',
-    'Sports & Outdoors',
     'Clothing, Shoes, & Accessories',
     'Sports & Outdoors',
     'Collectibles & Art',
@@ -142,6 +147,17 @@ const throwErr = (title: any, msg: any) => {
     errType.value = title
     errMsg.value = msg
     errDialog.value = true
+}
+const search = (event:any) => {
+    setTimeout(() => {
+        if (!event.query.trim().length) {
+            filteredCats.value = [...allCats.value];
+        } else {
+            filteredCats.value = allCats.value.filter((category) => {
+                return category.toLowerCase().includes(event.query.toLowerCase());
+            });
+        }
+    }, 250);
 }
 </script>
 

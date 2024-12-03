@@ -158,6 +158,7 @@ const resetFields = async (action:any) => {
 
     addDialog.value = false
     editDialog.value = false
+    deleteDialog.value = false
 }
 </script>
 

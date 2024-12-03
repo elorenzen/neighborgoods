@@ -29,7 +29,12 @@
                                 </FloatLabel>
                             </div>
                             <div class="my-2">
-                                <AutoComplete v-model="category" :suggestions="allCats" placeholder="Item Category"></AutoComplete>
+                                <AutoComplete
+                                    v-model="category"
+                                    :suggestions="filteredCats"
+                                    placeholder="Item Category"
+                                    @complete="search($event)"
+                                ></AutoComplete>
                             </div>
                             <div class="my-2">
                                 <FloatLabel variant="on">
@@ -62,26 +67,26 @@
 
 <script setup lang="ts">
 import { v4 } from 'uuid'
-const supabase    = useSupabaseClient()
-const props       = defineProps(['id'])
-const emit        = defineEmits(['created', 'errored'])
-const creatorId   = props.id
-const name        = ref()
-const description = ref()
-const imageUrl    = ref()
-const imageName   = ref()
-const price       = ref(0)
-const qty         = ref(1)
-const category    = ref('')
-const errType     = ref()
-const errMsg      = ref()
-const uploading   = ref(false)
-const loading     = ref(false)
-const errDialog   = ref(false)
-const allCats     = ref([
+const supabase     = useSupabaseClient()
+const props        = defineProps(['id'])
+const emit         = defineEmits(['created', 'errored'])
+const creatorId    = props.id
+const name         = ref()
+const description  = ref()
+const imageUrl     = ref()
+const imageName    = ref()
+const price        = ref(0)
+const qty          = ref(1)
+const category     = ref('')
+const errType      = ref()
+const errMsg       = ref()
+const uploading    = ref(false)
+const loading      = ref(false)
+const errDialog    = ref(false)
+const filteredCats = ref()
+const allCats      = ref([
     'Electronics & Media',
     'Toys, Games, Hobbies',
-    'Sports & Outdoors',
     'Clothing, Shoes, & Accessories',
     'Sports & Outdoors',
     'Collectibles & Art',
@@ -136,6 +141,17 @@ const throwErr = (title: any, msg: any) => {
     errType.value = title
     errMsg.value = msg
     errDialog.value = true
+}
+const search = (event:any) => {
+    setTimeout(() => {
+        if (!event.query.trim().length) {
+            filteredCats.value = [...allCats.value];
+        } else {
+            filteredCats.value = allCats.value.filter((category) => {
+                return category.toLowerCase().includes(event.query.toLowerCase());
+            });
+        }
+    }, 250);
 }
 </script>
 
