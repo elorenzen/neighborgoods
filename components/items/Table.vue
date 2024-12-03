@@ -31,7 +31,11 @@
                     <Button icon="pi pi-trash" outlined rounded severity="danger" @click="promptDeletion(slotProps.data)" />
                 </template>
             </Column>
-            <!-- <template #footer> Total: {{ saleItems ? saleItems.length : 0 }} items. </template> -->
+            <template #footer>
+                <span class="font-medium text-surface-500 dark:text-surface-400 text-sm" style="color: gray;">
+                    {{ saleItems ? saleItems.length : 0 }} sales items.
+                </span>
+            </template>
         </DataTable>
 
         <!-- ADD ITEM -->

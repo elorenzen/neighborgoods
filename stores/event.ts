@@ -3,6 +3,7 @@ export const useEventStore = defineStore('event', {
       allEvents: [],
     }),
     getters: {
+      getAllEvents: (state) => state.allEvents
     },
     actions: {
       async setAllEvents(items: []) {
