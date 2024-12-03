@@ -3,7 +3,7 @@
         <DataTable :value="userEvents" tableStyle="width: 100%">
             <template #header>
                 <div class="flex flex-wrap items-center justify-between gap-2">
-                    <span class="text-xl font-bold">Sale Items</span>
+                    <span class="text-xl font-bold">Sale Events</span>
                     <Button
                         outlined
                         severity="secondary"
@@ -12,12 +12,29 @@
                     />
                 </div>
             </template>
-            <Column field="start" header="Start"></Column>
-            <Column field="end" header="End"></Column>
-            <Column field="location_address" header="Location"></Column>
-            <Column field="payment_options" header="Payment Options"></Column>
+            <Column header="Date">
+                <template #body="slotProps">
+                    {{ new Date(slotProps.data.start).toLocaleDateString('en-US') }}
+                </template>
+            </Column>
+            <Column header="Time">
+                <template #body="slotProps">
+                    {{ new Date(slotProps.data.start).toLocaleTimeString('en-US') }} -
+                    {{ new Date(slotProps.data.end).toLocaleTimeString('en-US') }}
+                </template>
+            </Column>
+            <Column field="item_categories" header="Item Categories" style="max-width: 16rem;">
+                <template #body="slotProps">
+                    <Badge class="mx-1" v-for="(i, index) in slotProps.data.item_categories" :key="`${i}-${index}`">{{ i }}</Badge>
+                </template>
+            </Column>
+            <Column field="location_address" header="Location" style="max-width: 16rem;"></Column>
+            <Column field="payment_options" header="Payment Options">
+                <template #body="slotProps">
+                    <Chip class="ma-1" :icon="getIcon(i)" v-for="(i, index) in slotProps.data.payment_options" :key="`${i}-${index}`" />
+                </template>
+            </Column>
             <Column field="notes" header="Notes" style="max-width: 20rem;"></Column>
-            <Column field="item_categories" header="Item Categories"></Column>
             <Column :exportable="false" style="min-width:8rem">
                 <template #body="slotProps">
                     <Button icon="pi pi-pencil" outlined rounded class="mr-2" @click="openEditDialog(slotProps.data)" />
@@ -89,6 +106,14 @@ const openEditDialog = () => {
 }
 const promptDeletion = () => {
     console.log('prompt delete!')
+}
+const getIcon = (str:any) => {
+    switch(str) {
+        case 'Cash': return 'pi pi-money-bill';
+        case 'Credit/Debit': return 'pi pi-credit-card';
+        case 'Venmo': return 'pi pi-paypal';
+        case 'Apple Pay': return 'pi pi-apple';
+    }
 }
 </script>
 
