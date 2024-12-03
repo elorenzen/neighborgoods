@@ -37,6 +37,12 @@
                         </div>
                         <div class="my-2">
                             <FloatLabel variant="on">
+                                <Select id="status" v-model="item.status" :options="['For Sale', 'Not For Sale', 'Sold', 'On Hold']" />
+                                <label for="status">Status</label>
+                            </FloatLabel>
+                        </div>
+                        <div class="my-2">
+                            <FloatLabel variant="on">
                                 <Textarea id="desc" v-model="item.description" rows="5" cols="50" style="resize: none" />
                                 <label for="desc">Description</label>
                             </FloatLabel>
@@ -82,7 +88,8 @@ const allCats      = ref([
     'Collectibles & Art',
     'Cooking & Appliances',
     'Office',
-    'Furniture'
+    'Furniture',
+    'Books'
 ])
 
 const submitEdits = async () => {
@@ -96,6 +103,7 @@ const submitEdits = async () => {
         qty: item.value.qty,
         updated_at: new Date(),
         price: item.value.price,
+        status: item.value.status
     }
 
     const { error } = await supabase

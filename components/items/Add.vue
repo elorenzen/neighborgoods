@@ -92,7 +92,8 @@ const allCats      = ref([
     'Collectibles & Art',
     'Cooking & Appliances',
     'Office',
-    'Furniture'
+    'Furniture',
+    'Books'
 ])
 
 const addItem = async () => {
@@ -106,7 +107,6 @@ const addItem = async () => {
         image_url: imageUrl.value,
         image_name: imageName.value,
         qty: qty.value,
-        views: 0,
         likes: 0,
         status: 'Available',
         created_at: new Date(),

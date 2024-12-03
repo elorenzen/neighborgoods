@@ -3,7 +3,7 @@
         <DataTable :value="saleItems" tableStyle="width: 100%">
             <template #header>
                 <div class="flex flex-wrap items-center justify-between gap-2">
-                    <span class="text-xl font-bold">Sale Items</span>
+                    <span class="text-xl font-bold">Your Items</span>
                     <Button
                         outlined
                         severity="secondary"
@@ -12,19 +12,24 @@
                     />
                 </div>
             </template>
-            <Column field="name" header="Name"></Column>
+            <Column field="name" header="Name" sortable></Column>
             <Column header="Image">
                 <template #body="{ data }">
                     <img :src="data.image_url" :alt="data.image_name" class="w-24 h-24 rounded" />
                 </template>
             </Column>
-            <Column field="price" header="Price">
+            <Column field="price" header="Price" sortable>
                 <template #body="slotProps">
                     {{ formatCurrency(slotProps.data.price) }}
                 </template>
             </Column>
             <Column field="description" header="Description" style="max-width: 20rem;"></Column>
-            <Column field="category" header="Category"></Column>
+            <Column field="category" header="Category" sortable></Column>
+            <Column field="status" header="Status" sortable>
+                <template #body="slotProps">
+                    <Tag :value="slotProps.data.status" :severity="getStatusLabel(slotProps.data.status)" />
+                </template>
+            </Column>
             <Column :exportable="false" style="min-width:8rem">
                 <template #body="slotProps">
                     <Button icon="pi pi-pencil" outlined rounded class="mr-2" @click="openEditDialog(slotProps.data)" />
@@ -32,8 +37,8 @@
                 </template>
             </Column>
             <template #footer>
-                <span class="font-medium text-surface-500 dark:text-surface-400 text-sm" style="color: gray;">
-                    {{ saleItems ? saleItems.length : 0 }} sales items.
+                <span class="font-medium text-surface-500 dark:text-surface-400 text-xs" style="color: gray;">
+                    Total: {{ saleItems ? saleItems.length : 0 }}
                 </span>
             </template>
         </DataTable>
@@ -164,6 +169,24 @@ const resetFields = async (action:any) => {
     editDialog.value = false
     deleteDialog.value = false
 }
+const getStatusLabel = (status: any) => {
+    switch (status) {
+        case 'For Sale':
+            return 'secondary';
+
+        case 'On Hold':
+            return 'warn';
+        
+        case 'Not For Sale':
+            return 'danger';
+
+        case 'Sold':
+            return 'success';
+
+        default:
+            return null;
+    }
+};
 </script>
 
 <style scoped>

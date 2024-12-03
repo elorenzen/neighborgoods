@@ -214,7 +214,6 @@ const addEvent = async () => {
         notes: notes.value,
         item_categories: categories.value,
         associated_users: [user.value.id],
-        views: 0,
         payment_options: payOptions.value
     }
     console.log('event object: ', obj)
