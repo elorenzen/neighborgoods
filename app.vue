@@ -19,7 +19,7 @@ if (user.value) {
       .select()
       .eq('id', user.value.id)
   const foundUser = data ? data[0] : null
-  await userStore.fetchUser(foundUser)
+  await userStore.setUser(foundUser)
 }
 
 const { data: itemData } = await supabase.from('items').select()

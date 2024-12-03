@@ -5,6 +5,15 @@
                 User Data
             </template>
             <template #content>
+                <!--  hello, user.
+                user data here
+                
+                COMPONENT:
+                    show upcoming event/prompt user to create
+
+                COMPONENT:
+                    Item gallery.
+                -->
                 <div v-if="user">{{ user }}</div>
             </template>
         </Card>

@@ -1,11 +1,43 @@
 <template>
-    <Menubar :model="navItems">
+    <Menubar>
         <template #start>
             <Logo class="w-10 h-10 font-bold" :fontControlled="false" style="color: #008040;" />
             <NuxtLink to="/" class="ml-2 text-xl font-bold" style="color: #008040;">NeighborGoods</NuxtLink>
         </template>
         <template #end>
-            <div class="flex items-center gap-2">
+            <div v-if="!user" class="flex items-center gap-2">
+                <InputText placeholder="Email" v-model="email" type="text" class="w-32 sm:w-auto" />
+                <Password placeholder="Password" v-model="password" class="w-32 sm:w-auto" />
+                <Button
+                  outlined
+                  @click="fireAuth"
+                  :loading="loading"
+                >Login</Button>
+  
+                <Button
+                  outlined
+                  severity="secondary"
+                  @click="register"
+                >Sign Up</Button>
+
+                <Button
+                  outlined
+                  severity="contrast"
+                  type="button"
+                  icon="pi pi-bars"
+                  @click="toggleViewerMenu"
+                  aria-haspopup="true"
+                  aria-controls="viewer_menu"
+                />
+                <Menu
+                  ref="viewMenu"
+                  id="viewer_menu"
+                  :model="viewerMenu"
+                  :popup="true"
+                  :rerender="renderKey"
+                />
+            </div>
+            <div v-else class="flex items-center gap-2">
                 <InputText v-if="!user" placeholder="Email" v-model="email" type="text" class="w-32 sm:w-auto" />
                 <Password v-if="!user" placeholder="Password" v-model="password" class="w-32 sm:w-auto" />
                 <Button
@@ -24,9 +56,9 @@
   
                 <Button v-if="user" outlined severity="contrast" type="button" icon="pi pi-user" @click="toggleAccountMenu" aria-haspopup="true" aria-controls="account_menu" />
                 <Menu
-                  ref="menu"
+                  ref="acctMenu"
                   id="account_menu"
-                  :model="menuItems"
+                  :model="accountMenu"
                   :popup="true"
                   :rerender="renderKey"
                 />
@@ -52,67 +84,76 @@
   
   const email     = ref('')
   const password  = ref('')
-  const menu      = ref();
-  const navItems  = ref([
+  const acctMenu      = ref();
+  const viewMenu      = ref();
+
+  const viewerMenu  = ref([
     {
-      label: 'Home',
-      icon: 'pi pi-home',
-      command: () => {
-        router.push('/')
-      }
-    },
-    {
-      label: 'Map View',
-      icon: 'pi pi-globe',
-      command: () => {
-        router.push('/map')
-      }
-    },
-    {
-      label: 'Inventory',
-      icon: 'pi pi-shopping-cart',
-      command: () => {
-        router.push(`/inventory/${storeUser.id}`)
-      }
-    },
+      items: [
+        {
+          label: 'How It Works',
+          icon: 'pi pi-info-circle',
+          command: () => {
+            router.push('/information')
+          }
+        },
+        {
+          label: 'Map View',
+          icon: 'pi pi-globe',
+          command: () => {
+            router.push('/map')
+          }
+        },
+        {
+          label: 'Items Nearby',
+          icon: 'pi pi-shopping-cart',
+          command: () => {
+            router.push('/saleItems')
+          }
+        },
+      ]
+    }
   ])
-  const menuItems = ref([
+  const accountMenu = ref([
       {
           items: [
-              // {
-              //     label: 'Profile',
-              //     icon: 'pi pi-home',
-              //     command: () => {
-              //       router.push(`/${storeUser.type}s/${storeUser.associated_merchant_id ? storeUser.associated_merchant_id : storeUser.associated_vendor_id}`)
-              //     }
-              // },
-              // {
-              //     label: 'Messages',
-              //     icon: 'pi pi-inbox',
-              //     command: () => {
-              //       router.push(`/messages/${storeUser.associated_merchant_id ? storeUser.associated_merchant_id : storeUser.associated_vendor_id}`)
-              //     }
-              // },
-              // {
-              //     label: 'Settings',
-              //     icon: 'pi pi-cog',
-              //     command: () => {
-              //       router.push(`/settings/${storeUser.associated_merchant_id ? storeUser.associated_merchant_id : storeUser.associated_vendor_id}`)
-              //     }
-              // },
               {
-                  label: `Sign out`,
-                  icon: 'pi pi-sign-out',
-                  command: async () => {
-                    await signOut()
-                  }
+                label: 'Home',
+                icon: 'pi pi-home',
+                command: () => {
+                  router.push(`/users/${storeUser.id}`)
+                }
+              },
+              {
+                label: 'Inventory',
+                icon: 'pi pi-shopping-cart',
+                command: () => {
+                  router.push(`/inventory/${storeUser.id}`)
+                }
+              },
+              {
+                label: 'Settings',
+                icon: 'pi pi-cog',
+                command: () => {
+                  router.push(`/settings/${storeUser.id}`)
+                }
+              },
+              {
+                label: `Sign out`,
+                icon: 'pi pi-sign-out',
+                command: async () => {
+                  await signOut()
+                }
               }
           ]
       }
   ]);
   
   const toggleAccountMenu = (event: any) => {
-    menu.value.toggle(event)
+    acctMenu.value.toggle(event)
+  }
+  const toggleViewerMenu = (event: any) => {
+    viewMenu.value.toggle(event)
   }
   const fireAuth = async () => {
     loading.value = true
@@ -136,7 +177,14 @@
     await navigateTo('/')
   }
   const confirmed = async (str: any) => {
-      await navigateTo(`/users/${str}`)
+    const { data } = await supabase
+      .from('users')
+      .select()
+      .eq('id', user.value.id)
+
+    const foundUser = data ? data[0] : null
+    await store.setUser(foundUser)
+    await navigateTo(`/users/${str}`)
   }
   const errored = async (str: any) => {
     errMsg.value = str
