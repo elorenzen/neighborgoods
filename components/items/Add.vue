@@ -108,7 +108,7 @@ const addItem = async () => {
         image_name: imageName.value,
         qty: qty.value,
         likes: 0,
-        status: 'Available',
+        status: 'For Sale',
         created_at: new Date(),
         updated_at: new Date(),
         price: price.value,
