@@ -180,6 +180,7 @@
   const signOut = async () => {
     console.log('signing out')
     await supabase.auth.signOut()
+    await store.setUser(null)
     email.value = ''
     password.value = ''
     await navigateTo('/')

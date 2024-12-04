@@ -13,6 +13,7 @@ export const useUserStore = defineStore('user', {
   actions: {
     async setUser(userParam: any) {
       if (userParam) this.user = userParam
+      else this.user = null
     },
     async setAllUsers(users: []) {
       this.users = users
