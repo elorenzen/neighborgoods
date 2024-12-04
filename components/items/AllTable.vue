@@ -19,7 +19,7 @@
             </Column>
             <Column field="description" header="Description" style="max-width: 20rem;"></Column>
             <Column field="category" header="Category" sortable></Column>
-            <Column :exportable="false">
+            <Column :exportable="false" v-if="user">
                 <template #body="{ data }">
                     <Button
                         v-if="user.id !== data.creator_id"
@@ -59,7 +59,7 @@ const supabase     = useSupabaseClient()
 const userStore    = useUserStore()
 const itemStore    = useItemStore()
 const user         = ref(userStore.user)
-const saleItems    = itemStore.getallItems
+const saleItems    = itemStore.getAllItemsForSale
 const errDialog    = ref(false)
 const errMsg       = ref()
 const errType      = ref()

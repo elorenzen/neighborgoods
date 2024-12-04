@@ -4,6 +4,7 @@ export const useItemStore = defineStore('item', {
     }),
     getters: {
       getallItems: (state) => state.allItems,
+      getAllItemsForSale: (state) => state.allItems.filter(e => e.status == 'For Sale')
     },
     actions: {
       async setAllItems(items: []) {
