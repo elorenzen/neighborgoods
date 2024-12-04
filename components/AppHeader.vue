@@ -84,8 +84,8 @@
   
   const email     = ref('')
   const password  = ref('')
-  const acctMenu      = ref();
-  const viewMenu      = ref();
+  const acctMenu  = ref();
+  const viewMenu  = ref();
 
   const viewerMenu  = ref([
     {
@@ -121,28 +121,28 @@
             label: 'Home',
             icon: 'pi pi-home',
             command: () => {
-              router.push(`/users/${storeUser.id}`)
+              router.push(`/users/${storeUser ? storeUser.id : user.value.id}`)
             }
           },
           {
             label: 'Inventory',
             icon: 'pi pi-receipt',
             command: () => {
-              router.push(`/inventory/${storeUser.id}`)
+              router.push(`/inventory/${storeUser ? storeUser.id : user.value.id}`)
             }
           },
           {
             label: 'Sales',
             icon: 'pi pi-shopping-cart',
             command: () => {
-              router.push(`/sales/${storeUser.id}`)
+              router.push(`/sales/${storeUser ? storeUser.id : user.value.id}`)
             }
           },
           {
             label: 'Settings',
             icon: 'pi pi-cog',
             command: () => {
-              router.push(`/settings/${storeUser.id}`)
+              router.push(`/settings/${storeUser ? storeUser.id : user.value.id}`)
             }
           },
           {
@@ -192,6 +192,7 @@
 
     const foundUser = data ? data[0] : null
     await store.setUser(foundUser)
+    storeUser
     await navigateTo(`/users/${str}`)
   }
   const errored = async (str: any) => {
