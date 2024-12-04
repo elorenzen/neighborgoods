@@ -3,6 +3,8 @@
     <ScriptGoogleMaps
       :center="center"
       :markers="markers"
+      :width="1000"
+      :height="500"
       :api-key="key"
       :mapOptions="{ zoom: 8 }"
     />
