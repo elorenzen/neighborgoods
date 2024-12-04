@@ -19,7 +19,7 @@
             </Column>
             <Column field="description" header="Description" style="max-width: 20rem;"></Column>
             <Column field="category" header="Category" sortable></Column>
-            <Column :exportable="false" style="min-width:8rem">
+            <Column :exportable="false">
                 <template #body="slotProps">
                     <Button icon="pi pi-heart" outlined rounded severity="danger" @click="likeItem(slotProps.data)" />
                 </template>
@@ -55,9 +55,34 @@ const saleItems    = itemStore.getallItems
 const errDialog    = ref(false)
 const errMsg       = ref()
 const errType      = ref()
-const loading      = ref(false)
+const loading      = ref(true)
 const snackbar     = ref(false)
 const snacktext    = ref('')
+const coordinates  = ref()
+
+onMounted(async () => {
+  const locRes = await getLocationFromUser()
+  await userStore.setUserLocation({
+    lat: locRes ? locRes.latitude : 34.0549, // Use DTLA lat. as fallback
+    lng: locRes ? locRes.longitude : 118.2426 // Use DTLA lat. as fallback
+  })
+
+  coordinates.value = userStore.getUserLocation
+  console.log('user coordinates: ', coordinates.value)
+  loading.value = false
+})
+
+const getLocationFromUser = () => {
+  return new Promise((resolve, reject) => {
+    if ('geolocation' in navigator) {
+      navigator.geolocation.getCurrentPosition((position) => {
+        resolve(position.coords);
+      }, reject);
+    } else {
+      reject('Geolocation not supported');
+    }
+  });
+}
 
 const throwErr = (title: any, msg: any) => {
     errType.value = title

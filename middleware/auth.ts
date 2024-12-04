@@ -15,6 +15,10 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
 
   const storeUser = userStore.getUser
 
-  if (user.value && storeUser) return
+  if (
+    user.value &&
+    storeUser &&
+    (to.params.id === storeUser.id)
+  ) return
   return navigateTo('/')
 })
