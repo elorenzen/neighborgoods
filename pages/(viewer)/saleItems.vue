@@ -3,7 +3,7 @@
         <DataTable :value="saleItems" tableStyle="width: 100%">
             <template #header>
                 <div class="flex flex-wrap items-center justify-between gap-2">
-                    <span class="text-xl font-bold">Items Nearby</span>
+                    <span class="text-xl font-bold">Sale Items</span>
                 </div>
             </template>
             <Column field="name" header="Name" sortable></Column>
@@ -20,8 +20,16 @@
             <Column field="description" header="Description" style="max-width: 20rem;"></Column>
             <Column field="category" header="Category" sortable></Column>
             <Column :exportable="false">
-                <template #body="slotProps">
-                    <Button icon="pi pi-heart" outlined rounded severity="danger" @click="likeItem(slotProps.data)" />
+                <template #body="{ data }">
+                    <Button
+                        v-if="user.id !== data.creator_id"
+                        :label="`${isLiked(data.id)} Item`"
+                        icon="pi pi-heart"
+                        outlined
+                        rounded
+                        severity="danger"
+                        @click="likeItem(data.id)"
+                    />
                 </template>
             </Column>
         </DataTable>
@@ -92,8 +100,31 @@ const throwErr = (title: any, msg: any) => {
 const formatCurrency = (value:any) => {
     return value.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
 }
-const likeItem = async (item:any) => {
-    console.log('item: ', item)
+const likeItem = async (id:any) => {
+    // Liked, so remove
+    if (!user.value.liked_items.includes(id)) user.value.liked_items.push(id)
+    // isn't liked, so add
+    else user.value.liked_items = user.value.liked_items.filter((e:any) => e !== id)
+    const updateObj = {
+        updated_at: new Date(),
+        liked_items: user.value.liked_items
+    }
+    const { error } = await supabase.from('users').update(updateObj).eq('id', user.value.id)
+    if (!error) await likeUpdated()
+    else throwErr('Item Like', error.message)
+}
+const likeUpdated = async () => {
+    const { data: itemData } = await supabase.from('items').select()
+    await itemStore.setAllItems(itemData)
+    saleItems.value = await itemStore.getUserItems(user.value.id)
+
+    snacktext.value = 'Item Like Updated!'
+    snackbar.value = true
+}
+const isLiked = (id:any) => {
+    if (user.value.liked_items) {
+        return user.value.liked_items.includes(id) ? 'Unlike' : 'Like'
+    }
 }
 </script>
 
