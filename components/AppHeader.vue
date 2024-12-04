@@ -125,6 +125,13 @@
             }
           },
           {
+            label: 'Your Sales Events',
+            icon: 'pi pi-receipt',
+            command: () => {
+              router.push(`/sales/${storeUser ? storeUser.id : user.value.id}`)
+            }
+          },
+          {
             label: 'Your Sale Items',
             icon: 'pi pi-cart-plus',
             command: () => {
@@ -132,10 +139,10 @@
             }
           },
           {
-            label: 'Sales',
-            icon: 'pi pi-receipt',
+            label: 'All Sale Items',
+            icon: 'pi pi-shopping-cart',
             command: () => {
-              router.push(`/sales/${storeUser ? storeUser.id : user.value.id}`)
+              router.push('/saleItems')
             }
           },
           {
@@ -150,13 +157,6 @@
             icon: 'pi pi-sign-out',
             command: async () => {
               await signOut()
-            }
-          },
-          {
-            label: 'All Sale Items',
-            icon: 'pi pi-shopping-cart',
-            command: () => {
-              router.push('/saleItems')
             }
           },
       ]
