@@ -49,11 +49,12 @@ const addAuthUser = async () => {
     if ( data && !error) {
         // if no user auth error, create new user in db.
          const userObj = {
-             id: data.user?.id,
-             created_at: new Date(),
-             is_admin: true,
-             email: email.value,
-             available_for_contact: true,
+            id: data.user?.id,
+            created_at: new Date(),
+            is_admin: true,
+            email: email.value,
+            available_for_contact: true,
+            liked_items: []
          }
         const { error: userErr } = await supabase.from('users').insert(userObj)
         if (!userErr) {
