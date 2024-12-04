@@ -125,24 +125,17 @@
             }
           },
           {
-            label: 'Your Sales Events',
+            label: 'Sales Events',
             icon: 'pi pi-receipt',
             command: () => {
               router.push(`/sales/${storeUser ? storeUser.id : user.value.id}`)
             }
           },
           {
-            label: 'Your Sale Items',
-            icon: 'pi pi-cart-plus',
-            command: () => {
-              router.push(`/inventory/${storeUser ? storeUser.id : user.value.id}`)
-            }
-          },
-          {
-            label: 'All Sale Items',
+            label: 'Inventory',
             icon: 'pi pi-shopping-cart',
             command: () => {
-              router.push('/saleItems')
+              router.push(`/inventory/${storeUser ? storeUser.id : user.value.id}`)
             }
           },
           {
