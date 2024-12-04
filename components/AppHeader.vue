@@ -105,7 +105,7 @@
           }
         },
         {
-          label: 'Items Nearby',
+          label: 'Sale Items',
           icon: 'pi pi-shopping-cart',
           command: () => {
             router.push('/saleItems')
@@ -125,15 +125,15 @@
             }
           },
           {
-            label: 'Inventory',
-            icon: 'pi pi-receipt',
+            label: 'Your Sale Items',
+            icon: 'pi pi-cart-plus',
             command: () => {
               router.push(`/inventory/${storeUser ? storeUser.id : user.value.id}`)
             }
           },
           {
             label: 'Sales',
-            icon: 'pi pi-shopping-cart',
+            icon: 'pi pi-receipt',
             command: () => {
               router.push(`/sales/${storeUser ? storeUser.id : user.value.id}`)
             }
@@ -151,7 +151,14 @@
             command: async () => {
               await signOut()
             }
-          }
+          },
+          {
+            label: 'All Sale Items',
+            icon: 'pi pi-shopping-cart',
+            command: () => {
+              router.push('/saleItems')
+            }
+          },
       ]
     }
   ]);
