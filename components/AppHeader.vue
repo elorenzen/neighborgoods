@@ -171,6 +171,7 @@
   
     if (!error && data) await confirmed(data?.user.id)
     else await errored(error?.message)
+    renderKey.value++
     loading.value = false
   }
   
