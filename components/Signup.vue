@@ -1,13 +1,16 @@
 <template>
-    <div class="flex justify-content-center flex-wrap">
+    <div class="flex items-center justify-center p-5">
         <Card style="width: 30rem; overflow: hidden">
+            <template #title>
+                <div class="flex items-center justify-center">Sign Up</div>
+            </template>
             <template #content>
                 <Fluid>
                     <div>
-                        <div class="col-span-full">
+                        <div class="col-span-full ma-2">
                             <InputText v-if="!user" placeholder="Email" v-model="email" type="text" class="w-32 sm:w-auto" />
                         </div>
-                        <div class="col-span-full">
+                        <div class="col-span-full ma-2">
                             <Password v-if="!user" placeholder="Password" v-model="password" class="w-32 sm:w-auto" />
                         </div>
                     </div>
@@ -61,7 +64,7 @@ const addAuthUser = async () => {
             snackbar.value = true
             snacktext.value = "New user registered! Sign In."
 
-            await navigateTo('/')
+            await navigateTo('/confirmEmail')
         }
     }
     else {
