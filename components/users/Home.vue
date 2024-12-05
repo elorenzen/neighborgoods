@@ -4,9 +4,9 @@
             <template #title>
                 Welcome, {{
                     (user.first_name && user.last_name) ?
-                    `${user.first_name} ${user.last_name}` :
+                    `${user.first_name} ${user.last_name.substring(0, 1)}` :
                     'User'
-                }}!
+                }}.
             </template>
             <template #content>
                 {{ user }}
@@ -17,18 +17,13 @@
                 Upcoming Sales Events
             </template>
         </Card>
-        <Card class="ma-2">
-            <template #title>
-                Item Gallery
-            </template>
-        </Card>
+        <ItemsGallery />
     </div>
 </template>
 
 <script setup lang="ts">
 const store = useUserStore()
 const user = ref(store.user)
-console.log('store.user: ', store.user)
 </script>
 
 <style scoped>
