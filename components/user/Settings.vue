@@ -77,9 +77,12 @@
                             </Fluid>
                         </v-col>
                     </v-row>
-                    <v-row class="pa-2">
-                        <v-btn @click="submitEdits" block :loading="loading">Submit Edits</v-btn>
-                    </v-row>
+                </template>
+                <template #footer>
+                    <div class="flex justify-end gap-2">
+                        <Button variant="text" label="Delete Account" severity="danger" @click="delDialog = true"></Button>
+                        <Button type="button" label="Save Edits" severity="success" @click="submitEdits"></Button>
+                    </div>
                 </template>
             </Card>
         </v-row>
@@ -94,7 +97,7 @@
 
             
         -->
-        <!-- <DeleteDialog v-if="deleteDialog" :itemType="'Inventory Item'" @deleteConfirm="confirmDelete" @deleteCancel="cancelDelete" /> -->
+        <DeleteDialog v-if="delDialog" :itemType="'Account'" @deleteConfirm="confirmDelete" @deleteCancel="delDialog = false" />
         <ErrorDialog v-if="errDialog" :errType="errType" :errMsg="errMsg" @errorClose="errDialog = false" />
 
         <v-snackbar
@@ -120,6 +123,7 @@
 import { v4 } from 'uuid'
 const supabase  = useSupabaseClient()
 const store     = useUserStore()
+const itemStore = useItemStore()
 const user      = ref(store.user)
 const loading   = ref(false)
 const uploading = ref(false)
@@ -130,6 +134,7 @@ const imageUrl  = ref(user.value.image_url ? user.value.image_url : null)
 const imageName = ref(user.value.image_name ? user.value.image_name : null)
 const snackbar  = ref(false)
 const snacktext = ref('')
+const delDialog = ref(false)
 
 const updateImage = async (e: any, prevFile: any) => {
     uploading.value = true
@@ -197,6 +202,49 @@ const submitEdits = async () => {
         await store.setUser(menuData)
     } else throwErr('Menu Item Update(s)', error.message)
     loading.value = false
+}
+const confirmDelete = async () => {
+    const uid   = user.value.id
+    const items = await itemStore.getUserItems(user.value.id)
+    const img   = imageName.value
+    let errors  = []
+
+    // delete avatar image.
+    const { error: imgErr } = await supabase.storage.from('user_avatars').remove([img])
+    errors.push(imgErr ? imgErr.message : undefined)
+
+    // iterate over all associated items,
+    // delete images. Then, delete items.
+    for (let item of items) {
+        if (item.image_name) {
+            const { error: imgErr } = await supabase.storage.from('inventory_photos').remove([img])
+            errors.push(imgErr ? imgErr.message : undefined)
+        }
+        const { error: itemErr } = await supabase.from('items').delete().eq('id', item.id)
+        errors.push(itemErr ? itemErr.message : undefined)
+    }
+
+    // delete user from Db.
+    const { error: usrErr } = await supabase.from('users').delete().eq('id', uid)
+    errors.push(usrErr ? usrErr.message : undefined)
+
+    // Finally, delete user from auth storage and update store
+    const { error: authErr } = await supabase.auth.admin.deleteUser(uid)
+    errors.push(authErr ? authErr.message : undefined)
+
+    errors = errors.filter(e => e !== undefined)
+    if (errors.length > 0) {
+        errType.value = 'Account Deletion'
+        errors.forEach(e => errMsg.value += `${e}. `)
+        errDialog.value = true
+    } else {
+        snackbar.value = true
+        snacktext.value = 'Account deleted!'
+        await supabase.auth.signOut()
+        await store.setUser(null)
+        await navigateTo('/')
+    }
+    delDialog.value = false
 }
 const throwErr = (title: any, msg: any) => {
     errType.value = title
