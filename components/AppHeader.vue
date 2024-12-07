@@ -193,7 +193,6 @@
 
     const foundUser = data ? data[0] : null
     await store.setUser(foundUser)
-    storeUser
     await navigateTo(`/users/${str}`)
   }
   const errored = async (str: any) => {
