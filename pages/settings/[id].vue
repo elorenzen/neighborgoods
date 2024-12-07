@@ -1,7 +1,5 @@
 <template>
-    <div>
-        User settings
-    </div>
+    <UserSettings />
 </template>
 
 <script setup lang="ts">
