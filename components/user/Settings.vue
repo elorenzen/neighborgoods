@@ -7,8 +7,8 @@
                 <template #title>Settings</template>
                 <template #content>
                     <v-row>
-                        <!-- <v-col cols="3">
-                            <img :src="imageUrl" alt="Image" class="w-full rounded" />
+                        <v-col cols="3">
+                            <img :src="imageUrl" class="w-full rounded" />
                             <FileUpload
                                 class="mt-2"
                                 mode="basic"
@@ -18,7 +18,7 @@
                                 :auto="true"
                                 chooseLabel="Upload New Image"
                             />
-                        </v-col> -->
+                        </v-col>
                         <v-col>
                             <Fluid>
                                 <div class="grid grid-cols-2 gap-4">
@@ -131,42 +131,44 @@ const imageName = ref(user.value.image_name ? user.value.image_name : null)
 const snackbar  = ref(false)
 const snacktext = ref('')
 
-// const updateImage = async (e: any, prevFile: any) => {
-//     uploading.value = true
-//     const file = e.files[0]
-//     const oldFileName = prevFile
+const updateImage = async (e: any, prevFile: any) => {
+    uploading.value = true
+    const file = e.files[0]
+    const oldFileName = prevFile
 
-//     if (file) {
-//         const fileExt = file.name.split('.').pop()
-//         const fileName = `${v4()}.${fileExt}`
-//         const filePath = `${fileName}`
+    if (file) {
+        const fileExt = file.name.split('.').pop()
+        const fileName = `${v4()}.${fileExt}`
+        const filePath = `${fileName}`
 
-//         const { error: uploadError } = await supabase.storage.from('user_avatars').upload(filePath, file)
+        const { error: uploadError } = await supabase.storage.from('user_avatars').upload(filePath, file)
 
-//         if (!uploadError) {
-//             // 1. Upload new file to storage
-//             const { data } = supabase.storage.from('user_avatars').getPublicUrl(filePath)
-//             if (data) user.value.image_url = data.publicUrl
+        if (!uploadError) {
+            // 1. Upload new file to storage
+            const { data } = supabase.storage.from('user_avatars').getPublicUrl(filePath)
+            if (data) user.value.image_url = data.publicUrl
 
-//             // 2. Replace fields on menu document in Db
-//             const { error: dbErr } = await supabase
-//                 .from('users')
-//                 .update({ image_url: data.publicUrl, image_name: filePath })
-//                 .eq('id', user.value.id)
-            
-//             // 3. Finally, if a previous image exists, delete old file from storage
-//             if (!dbErr && oldFileName) {
-//                 const { error: storageDeleteErr } = await supabase
-//                     .storage
-//                     .from('user_avatars')
-//                     .remove([oldFileName])
-                
-//                 if (storageDeleteErr) throwErr('Menu Item Image Upload', storageDeleteErr.message)
-//             }
-//         } else throwErr('Menu Item Image Upload', uploadError.message)
-//     }
-//     uploading.value = false
-// }
+            // 2. Replace fields on menu document in Db
+            const { error: dbErr } = await supabase
+                .from('users')
+                .update({
+                    updated_at: new Date(),
+                    image_url: data.publicUrl,
+                    image_name: filePath })
+                .eq('id', user.value.id)      
+            // 3. Finally, if a previous image exists, delete old file from storage
+            if (!dbErr && oldFileName) {
+                const { error: storageDeleteErr } = await supabase
+                    .storage
+                    .from('user_avatars')
+                    .remove([oldFileName])      
+                if (storageDeleteErr) throwErr('Menu Item Image Upload', storageDeleteErr.message)
+            }
+            await resetFields('Settings Updated!')
+        } else throwErr('Menu Item Image Upload', uploadError.message)
+    }
+    uploading.value = false
+}
 const submitEdits = async () => {
     loading.value = true
     const itemObj = {
@@ -200,6 +202,17 @@ const throwErr = (title: any, msg: any) => {
     errType.value = title
     errMsg.value = msg
     errDialog.value = true
+}
+const resetFields = async (action:any) => {
+    const { data } = await supabase.from('users').select().eq('id', user.value.id)
+    const foundUser = data ? data[0] : null
+    await store.setUser(foundUser)
+    user.value = store.user
+    imageUrl.value = user.value.image_url
+    imageName.value = user.value.image_name
+
+    snacktext.value = action
+    snackbar.value = true
 }
 </script>
 
