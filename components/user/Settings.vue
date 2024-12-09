@@ -23,55 +23,61 @@
                             <Fluid>
                                 <div class="grid grid-cols-2 gap-4">
                                     <div>
-                                    <FloatLabel variant="on">
-                                        <InputText id="name" v-model="user.first_name" :fluid="true" />
-                                        <label for="name">First Name</label>
-                                    </FloatLabel>
-                                    </div>
-                                    <div>
-                                    <FloatLabel variant="on">
-                                        <InputText id="name" v-model="user.last_name" :fluid="true" />
-                                        <label for="name">Last Name</label>
-                                    </FloatLabel>
-                                    </div>
-
-                                    <!-- ADDRESS -->
-                                    <!-- <div>
-                                    <FloatLabel variant="on">
-                                        <div class="p-iconfield">
-                                        <span class="p-inputicon pi pi-map-marker"></span>
-                                        <input
-                                            class="p-inputtext p-component p-filled"
-                                            id="address"
-                                            ref="streetRef"
-                                            :placeholder="merchant.formatted_address ? merchant.formatted_address : 'Enter address'"
-                                        />
+                                        <FloatLabel variant="on">
+                                            <InputText id="name" v-model="user.first_name" :fluid="true" />
+                                            <label for="name">First Name</label>
+                                        </FloatLabel>
                                         </div>
-                                        <label for="phone">Location Address</label>
-                                    </FloatLabel>
-                                    </div> -->
+                                        <div>
+                                        <FloatLabel variant="on">
+                                            <InputText id="name" v-model="user.last_name" :fluid="true" />
+                                            <label for="name">Last Name</label>
+                                        </FloatLabel>
+                                        </div>
 
+                                        <!-- PHONE -->
+                                        <div>
+                                        <FloatLabel variant="on">
+                                            <IconField>
+                                                <InputIcon class="pi pi-phone" />
+                                                <InputText id="phone" v-model="user.phone" placeholder="Phone" />
+                                            </IconField>
+                                            <label for="phone">Phone</label>
+                                        </FloatLabel>
+                                        </div>
 
-                                    <!-- PHONE -->
-                                    <div>
-                                    <FloatLabel variant="on">
-                                        <IconField>
-                                            <InputIcon class="pi pi-phone" />
-                                            <InputText id="phone" v-model="user.phone" placeholder="Phone" />
-                                        </IconField>
-                                        <label for="phone">Phone</label>
-                                    </FloatLabel>
-                                    </div>
+                                        <!-- EMAIL -->
+                                        <div>
+                                        <FloatLabel variant="on">
+                                            <IconField>
+                                                <InputIcon class="pi pi-envelope" />
+                                                <InputText id="email" v-model="user.email" placeholder="Email" />
+                                            </IconField>
+                                            <label for="email">Email</label>
+                                        </FloatLabel>
 
-                                    <!-- EMAIL -->
-                                    <div>
-                                    <FloatLabel variant="on">
-                                        <IconField>
-                                            <InputIcon class="pi pi-envelope" />
-                                            <InputText id="email" v-model="user.email" placeholder="Email" />
-                                        </IconField>
-                                        <label for="email">Email</label>
-                                    </FloatLabel>
+                                        <!-- ADDRESS -->
+                                        <div>
+                                        <FloatLabel variant="on">
+                                            <div class="p-iconfield">
+                                            <span class="p-inputicon pi pi-map-marker"></span>
+                                            <input
+                                                class="p-inputtext p-component p-filled"
+                                                id="address"
+                                                ref="streetRef"
+                                                :placeholder="user.location_address ? user.location_address : 'Enter address'"
+                                            />
+                                            </div>
+                                            <label for="phone">Location Address</label>
+                                        </FloatLabel>
+                                        </div>
+                                        <!--
+                                        TO DO
+                                            show all items (bool)
+                                            auto-import items for new event (bool)
+                                            Location range distance
+                                            Location disclosure T-start
+                                        -->
                                     </div>
                                 </div>
                             </Fluid>
@@ -121,12 +127,18 @@
 
 <script setup lang="ts">
 import { v4 } from 'uuid'
+import { Loader } from '@googlemaps/js-api-loader'
 const supabase  = useSupabaseClient()
 const store     = useUserStore()
 const itemStore = useItemStore()
 const user      = ref(store.user)
 const loading   = ref(false)
 const uploading = ref(false)
+const streetRef   = ref()
+const addrComps   = ref()
+const address     = ref()
+const url         = ref()
+const coordinates = ref()
 const errDialog = ref()
 const errType   = ref()
 const errMsg    = ref()
@@ -135,6 +147,46 @@ const imageName = ref(user.value.image_name ? user.value.image_name : null)
 const snackbar  = ref(false)
 const snacktext = ref('')
 const delDialog = ref(false)
+
+onMounted(async () => {
+    await sdkInit()
+})
+
+const sdkInit = async () => {
+  //initialize google sdk
+  const config = useRuntimeConfig()
+  const loader = new Loader({
+    apiKey: config.public.gMapKey,
+    version: 'beta',
+    libraries: ['places'],
+  })
+  loader.load().then((google) => {
+    const options = {
+      componentRestrictions: { country: 'us' },
+      fields: ['geometry/location', 'name', 'formatted_address', 'types'],
+      strictBounds: false,
+    }
+    // attaches it to the input field with this ref
+    const autocomplete = new google.maps.places.Autocomplete(
+      streetRef.value,
+      options
+    )
+    autocomplete.addListener('place_changed', () => {
+      const placeResponse = autocomplete.getPlace()
+      const lat = placeResponse.geometry.location.lat()
+      const lng = placeResponse.geometry.location.lng()
+
+      addrComps.value = placeResponse
+        ? placeResponse.address_components
+        : ''
+      coordinates.value = placeResponse ? { lat: lat, lng: lng } : ''
+      address.value = placeResponse
+        ? placeResponse.formatted_address
+        : ''
+      url.value = placeResponse ? placeResponse.url : ''
+    })
+  })
+}
 
 const updateImage = async (e: any, prevFile: any) => {
     uploading.value = true
@@ -184,6 +236,9 @@ const submitEdits = async () => {
         phone: user.value.phone,
         image_url: imageUrl.value,
         image_name: imageName.value,
+        location_address: address ? address.value : user.value.location_address,
+        location_coordinates: coordinates ? coordinates.value : user.value.location_address,
+        location_url: url ? url.value : user.value.location_url
     }
 
     const { error } = await supabase
