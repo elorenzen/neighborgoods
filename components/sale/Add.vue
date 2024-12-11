@@ -204,7 +204,7 @@ const addEvent = async () => {
         associated_users: [user.value.id],
         payment_options: payOptions.value
     }
-    console.log('event object: ', obj)
+    // console.log('event object: ', obj)
     const { error } = await supabase.from('events').insert(obj)
     if (!error) emit('created')
     else emit('errored', error.message)
