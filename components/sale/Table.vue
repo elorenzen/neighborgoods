@@ -50,7 +50,7 @@
 
         <!-- ADD SALE -->
         <Dialog v-model:visible="addDialog" modal header="New Sale" :style="{ width: '50rem' }">
-            <SaleAdd :id="user.id" @created="saleSuccess" @errored="saleErrored" />
+            <SaleAdd :id="user.id" @created="saleSuccess" @errored="throwErr" />
         </Dialog>
 
         <!-- EDIT ITEM -->
@@ -59,7 +59,7 @@
             <!-- <ItemsEdit :item="itemToEdit" @edited="itemSuccess" @errored="itemErrored" /> -->
         </Dialog>
 
-        <DeleteDialog v-if="deleteDialog" :itemType="'Inventory Item'" @deleteConfirm="confirmDelete" @deleteCancel="cancelDelete" />
+        <DeleteDialog v-if="deleteDialog" :itemType="'Sale Event'" @deleteConfirm="confirmDelete" @deleteCancel="deleteDialog = false" />
         <ErrorDialog v-if="errDialog" :errType="'Sale Creation'" :errMsg="errMsg" @errorClose="errDialog = false" />
 
         <v-snackbar
@@ -102,8 +102,19 @@ const snacktext    = ref('')
 const openEditDialog = () => {
     editDialog.value = true
 }
-const promptDeletion = () => {
-    console.log('prompt delete!')
+const promptDeletion = (item:any) => {
+    itemToDelete.value = item
+    deleteDialog.value = true
+}
+const confirmDelete = async () => {
+    const { error } = await supabase
+        .from('events')
+        .delete()
+        .eq('id', itemToDelete.value.id)
+    if (!error) {
+        await confirmed('deleted')
+        deleteDialog.value = false
+    } else throwErr('Sales Event Delete', error.message)
 }
 const getIcon = (str:any) => {
     switch(str) {
@@ -114,16 +125,21 @@ const getIcon = (str:any) => {
     }
 }
 const saleSuccess = async () => {
+    await confirmed('created')
+    addDialog.value = false
+}
+const throwErr = async (str:any) => {
+    addDialog.value = false
+    deleteDialog.value = false
+    errMsg.value = str
+    errDialog.value = true
+}
+const confirmed = async (str:any) => {
     const { data: evtData } = await supabase.from('events').select()
     await eventStore.setAllEvents(evtData)
     userEvents.value = await eventStore.getUserEvents(user.value.id)
-    snacktext.value = 'Sales event created!'
+    snacktext.value = `Sales event ${str}!`
     snackbar.value = true
-    addDialog.value = false
-}
-const saleErrored = async (str:any) => {
-    errMsg.value = str
-    errDialog.value = true
 }
 </script>
 
