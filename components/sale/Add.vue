@@ -1,7 +1,6 @@
 <template>
     <div>
         <Card>
-            <template #title>New Sale Event</template>
             <template #content>
                 <Fluid>
                     <div class="grid grid-cols-2 gap-4">

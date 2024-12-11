@@ -1,6 +1,6 @@
 <template>
     <div>
-        <AddSale />
+        <SaleAdd />
     </div>
 </template>
 

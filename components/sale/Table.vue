@@ -48,10 +48,9 @@
             </template>
         </DataTable>
 
-        <!-- ADD ITEM -->
-        <Dialog v-model:visible="addDialog" modal header="New Menu Item" :style="{ width: '50rem' }">
-            add dialog
-            <!-- <ItemsAdd :id="user.id" @created="itemSuccess" @errored="itemErrored" /> -->
+        <!-- ADD SALE -->
+        <Dialog v-model:visible="addDialog" modal header="New Sale" :style="{ width: '50rem' }">
+            <SaleAdd :id="user.id" @created="saleSuccess" @errored="saleErrored" />
         </Dialog>
 
         <!-- EDIT ITEM -->
@@ -86,8 +85,7 @@
 const userStore    = useUserStore()
 const eventStore   = useEventStore()
 const user         = ref(userStore.user)
-const allEvents    = eventStore.getAllEvents
-const userEvents   = allEvents.filter((e:any) => e.associated_users.includes(user.value.id))
+const userEvents   = ref(await eventStore.getUserEvents(user.value.id))
 const addDialog    = ref(false)
 const editDialog   = ref(false)
 const itemToEdit   = ref(null)
@@ -114,6 +112,12 @@ const getIcon = (str:any) => {
         case 'Venmo': return 'pi pi-paypal';
         case 'Apple Pay': return 'pi pi-apple';
     }
+}
+const saleSuccess = async () => {
+    // get updates from Db
+
+    // snacks
+    // close
 }
 </script>
 

@@ -9,6 +9,9 @@ export const useEventStore = defineStore('event', {
       async setAllEvents(items: []) {
         this.allEvents = items 
       },
+      async getUserEvents(id:any) {
+        return this.allEvents.filter((i:any) => i.associated_users.includes(id))
+      }
     }
   })
   
