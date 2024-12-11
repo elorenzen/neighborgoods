@@ -60,7 +60,7 @@
         </Dialog>
 
         <DeleteDialog v-if="deleteDialog" :itemType="'Inventory Item'" @deleteConfirm="confirmDelete" @deleteCancel="cancelDelete" />
-        <ErrorDialog v-if="errDialog" :errType="errType" :errMsg="errMsg" @errorClose="errDialog = false" />
+        <ErrorDialog v-if="errDialog" :errType="'Sale Creation'" :errMsg="errMsg" @errorClose="errDialog = false" />
 
         <v-snackbar
           v-model="snackbar"
@@ -82,6 +82,7 @@
 </template>
 
 <script setup lang="ts">
+const supabase     = useSupabaseClient()
 const userStore    = useUserStore()
 const eventStore   = useEventStore()
 const user         = ref(userStore.user)
@@ -93,7 +94,6 @@ const itemToDelete = ref(null)
 const deleteDialog = ref(false)
 const errDialog    = ref(false)
 const errMsg       = ref()
-const errType      = ref()
 const layout       = ref('grid')
 const loading      = ref(false)
 const snackbar     = ref(false)
@@ -114,10 +114,16 @@ const getIcon = (str:any) => {
     }
 }
 const saleSuccess = async () => {
-    // get updates from Db
-
-    // snacks
-    // close
+    const { data: evtData } = await supabase.from('events').select()
+    await eventStore.setAllEvents(evtData)
+    userEvents.value = await eventStore.getUserEvents(user.value.id)
+    snacktext.value = 'Sales event created!'
+    snackbar.value = true
+    addDialog.value = false
+}
+const saleErrored = async (str:any) => {
+    errMsg.value = str
+    errDialog.value = true
 }
 </script>
 

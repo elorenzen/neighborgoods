@@ -3,39 +3,26 @@
         <Card>
             <template #content>
                 <Fluid>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <FloatLabel variant="on" class="my-4">
+                    <div class="grid grid-cols-1 gap-4">
+                        <div class="col-span-full">
+                            <FloatLabel variant="on" class="my-2">
                             <DatePicker id="new-event-start" v-model="date" fluid />
                             <label for="new-event-start" class="block mb-2"> Date</label>
                             </FloatLabel>
                         </div>
                         <div>
-                            <FloatLabel variant="on" class="my-4">
+                            <FloatLabel variant="on" class="my-2">
                             <DatePicker id="new-event-start" v-model="start" timeOnly fluid hourFormat="12" />
                             <label for="new-event-start" class="block mb-2"> Start Time</label>
                             </FloatLabel>
                         </div>
                         <div class="flex-auto">
-                            <FloatLabel variant="on" class="my-4">
+                            <FloatLabel variant="on" class="my-2">
                             <label for="new-event-end" class="block mb-2"> End Time</label>
                             <DatePicker id="new-event-end" v-model="end" timeOnly fluid hourFormat="12" />
                             </FloatLabel>
                         </div>
-                        <div class="flex-auto">
-                          <FloatLabel variant="on">
-                            <div class="p-iconfield">
-                              <span class="p-inputicon pi pi-map-marker"></span>
-                              <input
-                                class="p-inputtext p-component p-filled"
-                                id="address"
-                                ref="streetRef"
-                              />
-                            </div>
-                            <label for="phone">Address</label>
-                          </FloatLabel>
-                        </div>
-                        <div class="flex-auto">
+                        <!-- <div class="flex-auto">
                             <FloatLabel variant="on" class="my-4">
                                 <MultiSelect
                                     id="categories"
@@ -47,9 +34,9 @@
                                 />
                                 <label for="categories">Item Categories</label>
                             </FloatLabel>
-                        </div>
+                        </div> -->
                         <div class="flex-auto">
-                            <FloatLabel variant="on" class="my-4">
+                            <FloatLabel variant="on" class="my-2">
                                 <MultiSelect
                                     id="payment_options"
                                     v-model="payOptions"
@@ -61,7 +48,7 @@
                             </FloatLabel>
                         </div>
                         <div class="flex-auto">
-                            <FloatLabel variant="on" class="my-4">
+                            <FloatLabel variant="on" class="my-2">
                                 <Textarea id="notes" v-model="notes" rows="3" />
                                 <label for="notes">Notes for shoppers (e.g. "Ample parking in alleyway.")</label>
                             </FloatLabel>
@@ -104,6 +91,7 @@
 <script setup lang="ts">
 import { v4 } from 'uuid'
 import { Loader } from '@googlemaps/js-api-loader'
+const emit      = defineEmits(['created', 'errored'])
 const supabase  = useSupabaseClient()
 const userStore = useUserStore()
 
@@ -195,6 +183,7 @@ const errored = async (str: any) => {
     errDialog.value = true
 }
 const addEvent = async () => {
+    loading.value = true
     const startHours = new Date(start.value).getHours()
     const endHours   = new Date(end.value).getHours()
     const day        = date.value
@@ -206,9 +195,9 @@ const addEvent = async () => {
         created_at: new Date(),
         start: new Date(eventStart),
         end: new Date(eventEnd),
-        location_address: address.value,
-        location_coordinates: coordinates.value,
-        location_url: url.value,
+        location_address: user.value.location_address,
+        location_coordinates: user.value.location_coordinates,
+        location_url: user.value.location_url,
         status: 'created',
         notes: notes.value,
         item_categories: categories.value,
@@ -217,8 +206,9 @@ const addEvent = async () => {
     }
     console.log('event object: ', obj)
     const { error } = await supabase.from('events').insert(obj)
-    if (!error) await confirmed('Sale created!')
-    else await errored(error.message)
+    if (!error) emit('created')
+    else emit('errored', error.message)
+    loading.value = false
 }
 </script>
 
