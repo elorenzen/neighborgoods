@@ -1,8 +1,12 @@
 <template>
     <div>
       <h1>Welcome to the homepage</h1>
-      <AppAlert>
-        This is an auto-imported component
-      </AppAlert>
+      <!-- 
+      TO DO: 
+        company logline
+        CTA(get started)
+        screenshots
+        Testimonials
+      -->
     </div>
   </template>
