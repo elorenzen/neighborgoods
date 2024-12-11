@@ -40,7 +40,7 @@
                                         <FloatLabel variant="on">
                                             <IconField>
                                                 <InputIcon class="pi pi-phone" />
-                                                <InputText id="phone" v-model="user.phone" placeholder="Phone" />
+                                                <InputMask id="phone" v-model="user.phone" mask="(999) 999-9999" />
                                             </IconField>
                                             <label for="phone">Phone</label>
                                         </FloatLabel>
