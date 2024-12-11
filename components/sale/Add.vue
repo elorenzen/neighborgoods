@@ -127,7 +127,7 @@ const allCategories = ref([
 const allPaymentOptions = ref([
     'Cash',
     'Credit/Debit',
-    'Venmo',
+    'Venmo, Cash App, etc.',
     'Apple Pay'
 ])
 

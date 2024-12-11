@@ -109,7 +109,7 @@ const getIcon = (str:any) => {
     switch(str) {
         case 'Cash': return 'pi pi-money-bill';
         case 'Credit/Debit': return 'pi pi-credit-card';
-        case 'Venmo': return 'pi pi-paypal';
+        case 'Venmo, Cash App, etc.': return 'pi pi-building-columns';
         case 'Apple Pay': return 'pi pi-apple';
     }
 }
