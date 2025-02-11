@@ -13,7 +13,8 @@ export default defineNuxtConfig({
     '@nuxt/ui',
     '@nuxtjs/tailwindcss',
     'nuxt-svgo',
-    '@nuxt/scripts'
+    '@nuxt/scripts',
+    '@nuxtjs/google-fonts'
   ],
   supabase: {
     url: process.env.SUPABASE_URL,
@@ -29,5 +30,11 @@ export default defineNuxtConfig({
   primevue: {
     importTheme: { from: '~/assets/theme.js' },
   },
-  css: ['~/assets/main.css', 'primeicons/primeicons.css']
+  googleFonts: {
+    families: {
+      Neuton: true,
+      Mulish: true
+    }
+  },
+  css: [ 'primeicons/primeicons.css']
 })
