@@ -1,5 +1,6 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 import Aura from '@primevue/themes/aura';
+import colors from 'tailwindcss/colors'
 
 export default defineNuxtConfig({
   compatibilityDate: '2024-11-01',
@@ -9,7 +10,7 @@ export default defineNuxtConfig({
     '@primevue/nuxt-module',
     '@nuxtjs/supabase',
     '@pinia/nuxt',
-    'vuetify-nuxt-module',
+    //'vuetify-nuxt-module',
     '@nuxt/ui',
     '@nuxtjs/tailwindcss',
     'nuxt-svgo',
@@ -34,6 +35,15 @@ export default defineNuxtConfig({
     families: {
       Neuton: true,
       Mulish: true
+    }
+  },
+  tailwindcss: {
+    config: {
+      theme: {
+        extend: {
+          colors: { primary: colors.green }
+        }
+      }
     }
   },
   css: [ 'primeicons/primeicons.css']

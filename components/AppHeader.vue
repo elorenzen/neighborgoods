@@ -1,8 +1,8 @@
 <template>
     <Menubar>
         <template #start>
-            <Logo class="w-10 h-10 font-bold" :fontControlled="false" style="color: #008040;" />
-            <NuxtLink to="/" class="ml-2 text-xl font-bold" style="color: #008040;">NeighborGoods</NuxtLink>
+            <Logo class="w-10 h-10 font-bold text-primary" :fontControlled="false" />
+            <p class="text-xl font-bold font-title text-primary">NeighborGoods</p>
         </template>
         <template #end>
             <div v-if="!user" class="flex items-center gap-2">
